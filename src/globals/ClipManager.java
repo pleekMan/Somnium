@@ -14,7 +14,7 @@ public class ClipManager {
 	public int playingClip;
 
 	boolean editMode;
-	
+
 	//PImage mask;
 
 	public ClipManager() {
@@ -25,7 +25,7 @@ public class ClipManager {
 		selectedClip = playingClip = 0;
 
 		editMode = false;
-		
+
 		//mask = p5.loadImage("OctagonaMask.png");
 	}
 
@@ -51,7 +51,7 @@ public class ClipManager {
 				clip.render();
 			}
 		}
-		
+
 		// RENDER MASK
 		//p5.image(mask, LightsManager.center.x, LightsManager.center.y, LightsManager.getBoundingBoxDimension(), LightsManager.getBoundingBoxDimension());
 
@@ -90,34 +90,32 @@ public class ClipManager {
 
 			p5.stroke(0, 200, 200);
 			for (int i = 0; i < clips.size(); i++) {
-				
+
 				if (i == playingClip) {
-					p5.fill(200,0,0);
-				} else if (i == selectedClip){
-					p5.fill(200,200,0);
+					p5.fill(200, 0, 0);
+				} else if (i == selectedClip) {
+					p5.fill(200, 200, 0);
 				} else {
 					p5.fill(127);
 				}
-				
+
 				float x = originX + (boxSize * i);
 				p5.rect(x, originY, boxSize, 40);
 			}
-			
+
 			// PLAYING CLIP NAME
-			p5.fill(200,0,0);
-			p5.stroke(200,0,0);
+			p5.fill(200, 0, 0);
+			p5.stroke(200, 0, 0);
 			String playingClipName = getPlayingClip().getName();
 			p5.text(playingClipName, 20, originY - 20);
-			
+
 			p5.line(originX + (playingClip * boxSize), originY, originX + (playingClip * boxSize), originY - 18);
 			p5.line(originX, originY - 18, originX + (playingClip * boxSize), originY - 18);
-	
-			
+
 			// SELECTED CLIP NAME
 			String selectedClipName = getSelectedClip().getName();
 			p5.text(selectedClipName, 20, originY + 60);
-			
-			
+
 		} else {
 			p5.text("-- NO CLIPS LOADED --", originX, originY);
 		}
@@ -127,9 +125,9 @@ public class ClipManager {
 
 		// SELECT AND LOAD CLIPS
 		switch (key) {
-		
+
 		case '1':
-			
+
 			SphereHarmony sphereHarmony = new SphereHarmony(p5.JAVA2D);
 			sphereHarmony.load();
 			sphereHarmony.setName("SPHERE HARMONY");
@@ -160,7 +158,6 @@ public class ClipManager {
 			goToPreviousClip();
 		}
 
-		
 		// TRIGGERS
 		if (key == 'z') {
 			clips.get(playingClip).trigger(0);
@@ -199,7 +196,6 @@ public class ClipManager {
 		editMode = !editMode;
 	}
 
-
 	public Clip getPlayingClip() {
 		return clips.get(playingClip);
 	}
@@ -221,6 +217,23 @@ public class ClipManager {
 			selectedClip = 0;
 		}
 	}
+	
+	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
+	
+	public void recieveControllerChange(int channel, int number, int value) {
+		clips.get(selectedClip).recieveControllerChange(channel, number, value);
+	}
+
+	public void recieveNoteOn(int channel, int pitch, int velocity) {
+		clips.get(selectedClip).recieveNoteOn(channel, pitch, velocity);
+	}
+
+	public void recieveNoteOff(int channel, int pitch, int velocity) {
+		clips.get(selectedClip).recieveNoteOff(channel, pitch, velocity);
+	}
+	
+	// EVENTS FROM A MIDI CONTROLLER - END ------------
+
 
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();

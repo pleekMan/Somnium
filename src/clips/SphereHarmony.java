@@ -33,11 +33,11 @@ public class SphereHarmony extends Clip {
 	public SphereHarmony(String rendererType) {
 		super(rendererType);
 	}
-	
+
 	@Override
 	public void load() {
 		super.load();
-		
+
 		centroX = new float[circlesCount];
 		centroY = new float[circlesCount];
 		colors = new int[circlesCount];
@@ -65,7 +65,7 @@ public class SphereHarmony extends Clip {
 		radioInterno = 0;
 		brillo = 255;
 	}
-	
+
 	@Override
 	public void start() {
 		super.start();
@@ -92,17 +92,16 @@ public class SphereHarmony extends Clip {
 		//displaceRotation();
 		calcularPosiciones();
 		//dibujarCirculo();
-		
+
 		drawLayer.endDraw();
-		
+
 		p5.image(drawLayer, p5.width * 0.5f, p5.height * 0.5f);
-		
 
 	}
 
 	private void calcularPosiciones() {
 
-		radio4Circulos = p5.mouseX * 0.5f;
+		//radio4Circulos = p5.mouseX * 0.5f;
 
 		//fill(brillo, 127);
 		float rotationUnit = p5.TWO_PI / centroX.length;
@@ -168,16 +167,105 @@ public class SphereHarmony extends Clip {
 
 		return oscTrig;
 	}
-	
+
 	public void displaceRotation() {
-		  for (int i=0; i< oscTiempo[0].length; i++) {
-		    oscilationControl = p5.map(p5.mouseY, 0, drawLayer.height, 0, p5.TWO_PI);
-		    oscTiempo[0][i] = oscilationControl * i;
-		    oscTiempo[1][i] = oscilationControl * i;
-		    oscTiempo[2][i] = oscilationControl * i;
-		    oscTiempo[3][i] = oscilationControl * i;
-		  }
+		for (int i = 0; i < oscTiempo[0].length; i++) {
+			oscilationControl = p5.map(p5.mouseY, 0, drawLayer.height, 0, p5.TWO_PI);
+			oscTiempo[0][i] = oscilationControl * i;
+			oscTiempo[1][i] = oscilationControl * i;
+			oscTiempo[2][i] = oscilationControl * i;
+			oscTiempo[3][i] = oscilationControl * i;
 		}
+	}
+
+	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
+
+	public void recieveControllerChange(int channel, int number, int value) {
+		if (channel == 0) {
+
+		    // OSCILATION DISPLACEMENT (POSITION)
+		    if (number == 0) {
+		      for (int i=0; i< oscTiempo[0].length; i++) {
+		        oscilationControl = p5.map(value, 0, 127, 0, p5.TWO_PI);
+		        //THIS IS NOT WORKING
+		        oscTiempo[0][i] = oscilationControl * i;
+		        oscTiempo[1][i] = oscilationControl * i;
+		        oscTiempo[2][i] = oscilationControl * i;
+		        oscTiempo[3][i] = oscilationControl * i;
+		      }
+		    }
+
+		    if (number == 1) {
+		      brillo= p5.map(value, 0, 127, 0, 255);
+		    }
+
+		    // SELECT TRIG FUNCTION
+		    switch(number) {
+		    case 2:
+		      funcionTrigUsada = 0;
+		      break;
+		    case 3:
+		      funcionTrigUsada = 1;
+		      break;
+		    case 4:
+		      funcionTrigUsada = 2;
+		      break;
+		    default:
+		      break;
+		    }
+		  }
+
+
+		  if (channel == 1) {
+		    // OSCILATION DISPLACEMENT (VELOCITY FORWARD)
+		    if (number == 0) {
+		      for (int i=0; i< oscTiempo.length; i++) {
+		        anguloVel = p5.map(value, 0, 127, 0, 0.2f);
+		      }
+		    }
+
+		    if (number == 1) {
+		      pointSize = p5.map(value, 0, 127, 1, 300);
+		    }
+		  }
+
+		  if (channel == 2) {
+		    // INNER RADIUS
+		    if (number == 1) {
+		      radioInterno = p5.map(value, 0, 127, 0, drawLayer.height);
+		    }
+		  }
+
+		  if (channel == 3) {
+		    // INNER RADIUS
+		    if (number == 1) {
+		      radio = p5.map(value, 0, 127, 0, drawLayer.height);
+		    }
+		  }
+		  
+		  if (channel == 4) {
+			    // 4 CIRCLES CENTER OFFSET
+			    if (number == 0) {
+			    	radio4Circulos = p5.map(value, 0, 127, 0, drawLayer.height * 0.5f);
+			    }
+			    
+			    if (number == 1) {
+			    	// 4 CIRCLES ROTATION VELOCITY
+			    	rotacion4CirculosIncr = p5.map(value, 0, 127, 0, 1.0f);
+			    }
+			  }
+
+	}
+
+	public void recieveNoteOn(int channel, int pitch, int velocity) {
+
+	}
+
+	public void recieveNoteOff(int channel, int pitch, int velocity) {
+
+	}
+
+	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
 	@Deprecated
 	void dibujarCirculo() {

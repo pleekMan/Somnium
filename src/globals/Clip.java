@@ -78,6 +78,23 @@ public class Clip {
 	public PGraphics getDrawLayer() {
 		return drawLayer;
 	}
+	
+	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
+	
+	public void recieveControllerChange(int channel, int number, int value) {
+
+	}
+
+	public void recieveNoteOn(int channel, int pitch, int velocity) {
+
+
+	}
+
+	public void recieveNoteOff(int channel, int pitch, int velocity) {
+
+	}
+	
+	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
 
 	protected Main getP5() {

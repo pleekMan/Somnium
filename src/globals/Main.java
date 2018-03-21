@@ -1,13 +1,14 @@
 package globals;
 
 
+import controls.MidiController;
 import processing.core.PApplet;
 
 
 public class Main extends PApplet {
 
 	ClipManager clipManager;
-
+	MidiController midiController;
 	// GUI - BEGIN -----------------
 
 	//ControlP5 cp5;
@@ -15,7 +16,7 @@ public class Main extends PApplet {
 	// GUI - END -------------------
 	
 	public void settings(){
-		size(1920, 1080, P2D);		
+		size(960, 540, P2D);		
 	}
 
 	public void setup() {
@@ -28,6 +29,9 @@ public class Main extends PApplet {
 		imageMode(CENTER);
 
 		clipManager = new ClipManager();
+		
+		midiController = new MidiController();
+		midiController.setClipManagerReference(clipManager);
 
 		//createControllers();
 
