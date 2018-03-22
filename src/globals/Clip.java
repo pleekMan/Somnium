@@ -79,6 +79,10 @@ public class Clip {
 		return drawLayer;
 	}
 	
+	public void onKeyPressed(char key){
+		
+	}
+	
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
 	
 	public void recieveControllerChange(int channel, int number, int value) {

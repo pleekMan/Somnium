@@ -3,6 +3,7 @@ package globals;
 import java.util.ArrayList;
 
 import clips.SphereHarmony;
+import clips.platonicSolids.PlatonicSolids;
 //import processing.core.PGraphics;
 //import processing.core.PImage;
 
@@ -122,7 +123,9 @@ public class ClipManager {
 	}
 
 	public void onKeyPressed(char key) {
-
+		
+		if(clips.size()!=0)getSelectedClip().onKeyPressed(key);
+		
 		// SELECT AND LOAD CLIPS
 		switch (key) {
 
@@ -133,6 +136,13 @@ public class ClipManager {
 			sphereHarmony.setName("SPHERE HARMONY");
 			clips.add(sphereHarmony);
 			System.out.println("-|| Loaded :> " + sphereHarmony.getName());
+			break;
+		case '2':
+			PlatonicSolids platonicSolids = new PlatonicSolids(p5.P3D);
+			platonicSolids.load();
+			platonicSolids.setName("PLATONIC SOLIDS");
+			clips.add(platonicSolids);
+			System.out.println("-|| Loaded :> " + platonicSolids.getName());
 			break;
 		default:
 			// System.out.println("No Clip Found at: " + selectedClip);
@@ -174,6 +184,8 @@ public class ClipManager {
 		if (key == 'b') {
 			clips.get(playingClip).trigger(4);
 		}
+		
+		
 	}
 
 	private void triggerClip(int selectedClip) {
