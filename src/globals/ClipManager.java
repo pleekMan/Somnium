@@ -3,6 +3,7 @@ package globals;
 import java.util.ArrayList;
 
 import clips.SphereHarmony;
+import clips.lunarDrone.LunarDrone;
 import clips.platonicSolids.PlatonicSolids;
 //import processing.core.PGraphics;
 //import processing.core.PImage;
@@ -123,9 +124,10 @@ public class ClipManager {
 	}
 
 	public void onKeyPressed(char key) {
-		
-		if(clips.size()!=0)getSelectedClip().onKeyPressed(key);
-		
+
+		if (clips.size() != 0)
+			getSelectedClip().onKeyPressed(key);
+
 		// SELECT AND LOAD CLIPS
 		switch (key) {
 
@@ -143,6 +145,13 @@ public class ClipManager {
 			platonicSolids.setName("PLATONIC SOLIDS");
 			clips.add(platonicSolids);
 			System.out.println("-|| Loaded :> " + platonicSolids.getName());
+			break;
+		case '3':
+			LunarDrone lunarDrone = new LunarDrone(p5.P3D);
+			lunarDrone.load();
+			lunarDrone.setName("LUNAR DRONE");
+			clips.add(lunarDrone);
+			System.out.println("-|| Loaded :> " + lunarDrone.getName());
 			break;
 		default:
 			// System.out.println("No Clip Found at: " + selectedClip);
@@ -184,8 +193,7 @@ public class ClipManager {
 		if (key == 'b') {
 			clips.get(playingClip).trigger(4);
 		}
-		
-		
+
 	}
 
 	private void triggerClip(int selectedClip) {
@@ -229,9 +237,9 @@ public class ClipManager {
 			selectedClip = 0;
 		}
 	}
-	
+
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
-	
+
 	public void recieveControllerChange(int channel, int number, int value) {
 		clips.get(selectedClip).recieveControllerChange(channel, number, value);
 	}
@@ -243,9 +251,8 @@ public class ClipManager {
 	public void recieveNoteOff(int channel, int pitch, int velocity) {
 		clips.get(selectedClip).recieveNoteOff(channel, pitch, velocity);
 	}
-	
-	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
+	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
