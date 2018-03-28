@@ -12,7 +12,8 @@ uniform float multiplier;
 
 void main(void) {
   vec2 texUV = gl_FragCoord.xy / resolution.xy;
-  texUV.y = 1 - texUV.y;
+  //texUV.y = 1 - texUV.y;
+  texUV.y = texUV.y;
   vec3 color = texture2D(texture,texUV).rgb;
   vec3 invertedColor = vec3(1. - color.r, 1. - color.g, 1. - color.b);
   vec3 colorFinal = mix(color,invertedColor,multiplier);

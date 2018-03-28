@@ -30,21 +30,25 @@ public class LunarDrone extends Clip {
 	@Override
 	public void load() {
 		super.load();
-		
+
 		p5.noStroke();
 		p5.fill(255, 255, 0);
 		p5.strokeWeight(1);
 		p5.textureMode(p5.NORMAL);
-		p5.imageMode(p5.CENTER);
+		p5.imageMode(p5.CORNER);
 
 		canvasLunar = p5.createGraphics(drawLayer.width, drawLayer.height, p5.P3D);
+		canvasLunar.beginDraw();
+		canvasLunar.clear();
+		canvasLunar.endDraw();
+		
 		shader = p5.loadShader("invert.glsl");
 
 		cameraVel = new PVector(0, 0, -0.3f);
 
 		cam = new LunarCamera();
 		cam.setDrawLayer(drawLayer);
-		
+
 		craters = new ArrayList<Crater>();
 		cratersFrozen = canvasLunar.createShape(p5.GROUP);
 
@@ -83,12 +87,12 @@ public class LunarDrone extends Clip {
 		lightDarkControl = p5.norm(p5.mouseX, 0, p5.width);
 
 		cam.update();
-		//cam.render();
+		cam.render();
 
 		//FOV control
-		//float camFov = map(mouseX, 0, width, 0.1, TWO_PI);
-		//float camZ = (height/2.0) / tan(camFov/2.0);
-		//perspective(camFov, width/(float)height, camZ * 0.1, camZ * 10);
+		float camFov = p5.map(p5.mouseY, 0, p5.height, 0.1f, p5.TWO_PI);
+		float camZ = (p5.height/2.0f) / p5.tan(camFov/2.0f);
+		canvasLunar.perspective(camFov, p5.width/(float)p5.height, camZ * 0.1f, camZ * 10);
 
 		// CAM
 		canvasLunar.camera(cam.camPosition.x, cam.camPosition.y, cam.camPosition.z, cam.target.x, cam.target.y, cam.target.z, 0, 1, 0);
@@ -97,9 +101,23 @@ public class LunarDrone extends Clip {
 
 		canvasLunar.beginDraw();
 		//canvasLunar.background(255 - (255 * lightDarkControl));
-		canvasLunar.background(0);
+		
+		
+		if (p5.mouseX < p5.width * 0.75f) {
+			canvasLunar.background(0);
+		}
+		
+		
+		//canvasLunar.background(0,255,0);
+		
+		
+		
 		canvasLunar.shape(cratersFrozen);
-		canvasLunar.filter(shader);
+
+		//canvasLunar.fill(255,0,0);
+		//canvasLunar.rect(10,10,800,800);
+
+		//canvasLunar.filter(shader);
 		canvasLunar.endDraw();
 
 		// DO STUFF ON EACH CRATER
@@ -122,6 +140,8 @@ public class LunarDrone extends Clip {
 
 		drawLayer.beginDraw();
 		drawLayer.background(0);
+
+		
 		shader.set("resolution", (float) drawLayer.width, (float) drawLayer.height);
 		shader.set("multiplier", p5.mouseX / (float) drawLayer.width);
 
@@ -132,22 +152,22 @@ public class LunarDrone extends Clip {
 		drawLayer.resetShader();
 
 		//hint(DISABLE_DEPTH_TEST);
-		showFPS();
+		//showFPS();
 		//hint(ENABLE_DEPTH_TEST);
 
 		//camera.feed();
 		drawLayer.endDraw();
-		
+
 		p5.pushMatrix();
-		p5.translate(p5.width * 0.5f, p5.height * 0,5f);
+		p5.translate(p5.width * 0.5f, p5.height * 0, 5f);
 		p5.image(drawLayer, 0, 0);
 		p5.popMatrix();
 	}
 
 	void createNewCrater() {
 		Crater crater = new Crater();
-		
-		crater.setDrawLayer(drawLayer);
+
+		//crater.setDrawLayer(canvasLunar);
 		crater.setCenter(p5.random(-2000, 200), 0, p5.random(-10000, 0));
 		//crater.setCenter(0,0,0);
 		crater.setStages(p5.random(0, 0.25f), p5.random(0.25f, 0.5f), p5.random(0.5f, 0.75f), p5.random(0.75f, 1));

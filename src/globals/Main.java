@@ -16,7 +16,10 @@ public class Main extends PApplet {
 	// GUI - END -------------------
 	
 	public void settings(){
-		size(960, 540, P2D);		
+		//size(960, 540, P2D);
+		size(600,600, P2D);
+		//fullScreen(P2D,1);
+
 	}
 
 	public void setup() {

@@ -181,7 +181,7 @@ public class Crater {
 
 	  PShape getShape() {
 
-	    PShape crater = drawLayer.createShape();
+	    PShape crater = p5.createShape();
 
 	    //noFill();
 	    //stroke(127, 127, 255);

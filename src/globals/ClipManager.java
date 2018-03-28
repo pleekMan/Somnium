@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import clips.SphereHarmony;
 import clips.lunarDrone.LunarDrone;
 import clips.platonicSolids.PlatonicSolids;
+import clips.spaceCreatures.SpaceCreature;
 //import processing.core.PGraphics;
 //import processing.core.PImage;
+import clips.transition.Fader;
 
 public class ClipManager {
 
@@ -18,6 +20,8 @@ public class ClipManager {
 	boolean editMode;
 
 	//PImage mask;
+	
+	Fader fader;
 
 	public ClipManager() {
 		p5 = getP5();
@@ -29,11 +33,10 @@ public class ClipManager {
 		editMode = false;
 
 		//mask = p5.loadImage("OctagonaMask.png");
+		
+		fader = new Fader();
 	}
 
-	public void setup() {
-
-	}
 
 	public void update() {
 		for (Clip clip : clips) {
@@ -56,7 +59,9 @@ public class ClipManager {
 
 		// RENDER MASK
 		//p5.image(mask, LightsManager.center.x, LightsManager.center.y, LightsManager.getBoundingBoxDimension(), LightsManager.getBoundingBoxDimension());
-
+		
+		fader.render();
+		
 		// EDIT MODE DISPLAY -------------------------------
 
 		if (editMode) {
@@ -132,7 +137,6 @@ public class ClipManager {
 		switch (key) {
 
 		case '1':
-
 			SphereHarmony sphereHarmony = new SphereHarmony(p5.JAVA2D);
 			sphereHarmony.load();
 			sphereHarmony.setName("SPHERE HARMONY");
@@ -147,11 +151,18 @@ public class ClipManager {
 			System.out.println("-|| Loaded :> " + platonicSolids.getName());
 			break;
 		case '3':
-			LunarDrone lunarDrone = new LunarDrone(p5.P3D);
+			LunarDrone lunarDrone = new LunarDrone(p5.P2D);
 			lunarDrone.load();
 			lunarDrone.setName("LUNAR DRONE");
 			clips.add(lunarDrone);
 			System.out.println("-|| Loaded :> " + lunarDrone.getName());
+			break;
+		case '4':
+			SpaceCreature spaceCreatures = new SpaceCreature(p5.P3D);
+			spaceCreatures.load();
+			spaceCreatures.setName("SPACE CREATURES");
+			clips.add(spaceCreatures);
+			System.out.println("-|| Loaded :> " + spaceCreatures.getName());
 			break;
 		default:
 			// System.out.println("No Clip Found at: " + selectedClip);
@@ -242,6 +253,7 @@ public class ClipManager {
 
 	public void recieveControllerChange(int channel, int number, int value) {
 		clips.get(selectedClip).recieveControllerChange(channel, number, value);
+		fader.recieveControllerChange(channel, number, value);
 	}
 
 	public void recieveNoteOn(int channel, int pitch, int velocity) {

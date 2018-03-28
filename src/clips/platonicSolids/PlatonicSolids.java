@@ -2,7 +2,9 @@ package clips.platonicSolids;
 
 import java.util.ArrayList;
 
+import processing.core.PVector;
 import globals.Clip;
+
 //import clips.platonicSolids.*;
 
 public class PlatonicSolids extends Clip {
@@ -18,8 +20,8 @@ public class PlatonicSolids extends Clip {
 	boolean showSun;
 
 	float camX, camY, camZ;
-	float camAnim;
-	float camAnimIncrement;
+	PVector camAnim;
+	PVector camAnimIncrement;
 	float maxCamRadius;
 
 	int atStage;
@@ -31,11 +33,6 @@ public class PlatonicSolids extends Clip {
 	@Override
 	public void load() {
 		super.load();
-		drawLayer.textureMode(p5.NORMAL);
-		//stroke(0,0,255);
-		drawLayer.noStroke();
-		//fill(0,255,0);
-		//strokeWeight(1);
 
 		//backPaper = loadImage("paper_2.jpg");
 		//writeColor = color(75, 75, 60);
@@ -46,8 +43,8 @@ public class PlatonicSolids extends Clip {
 		showSun = true;
 
 		camX = camY = camZ = 0;
-		camAnim = 0;
-		camAnimIncrement = 0.01f;
+		camAnim = new PVector();
+		camAnimIncrement = new PVector(0.01f, 0.01f);
 		maxCamRadius = 500;
 
 		solids = new ArrayList<Solid>();
@@ -55,10 +52,14 @@ public class PlatonicSolids extends Clip {
 		initScene();
 
 		atStage = 0;
-		
+
+		drawLayer.beginDraw();
 		p5.imageMode(p5.CORNER);
+		drawLayer.textureMode(p5.NORMAL);
+		drawLayer.noStroke();
+		drawLayer.endDraw();
 	}
-	
+
 	void initScene() {
 
 		atStage = 0;
@@ -72,13 +73,13 @@ public class PlatonicSolids extends Clip {
 			//solido.setTexture(sunImage);
 		}
 	}
-	
+
 	@Override
 	public void render() {
 		//background(backPaper);
 		drawLayer.beginDraw();
 		drawLayer.background(0);
-		
+
 		if (!showSun) {
 			drawLayer.background(0);
 		} else {
@@ -90,10 +91,10 @@ public class PlatonicSolids extends Clip {
 
 		//camX = map(mouseX, 0, width, -500, 500);
 		//camY = map(mouseY, 0, height, 500, -500);
-		camX = p5.cos(camAnim) * maxCamRadius;
-		camY = p5.sin(camAnim) * maxCamRadius;
+		camX = p5.cos(camAnim.x) * maxCamRadius;
+		camY = p5.sin(camAnim.y) * maxCamRadius;
 		drawLayer.camera(camX, camY, 500, 0, 0, 0, 0, 1, 0);
-		camAnim += camAnimIncrement;
+		camAnim.add(camAnimIncrement);
 		//camera(0, -50, -100, 0, 0, 0, 0, 1, 0);
 
 		//fill(250, 0, 0);
@@ -143,7 +144,7 @@ public class PlatonicSolids extends Clip {
 		}
 
 		//hint(DISABLE_DEPTH_TEST);
-		
+
 		// SUN
 		/*
 		if (showSun) {
@@ -152,9 +153,7 @@ public class PlatonicSolids extends Clip {
 			sun.render();
 		}
 		*/
-		
-		
-		
+
 		//showSun = false;
 
 		//hint(ENABLE_DEPTH_TEST);
@@ -166,9 +165,11 @@ public class PlatonicSolids extends Clip {
 		//hint(ENABLE_DEPTH_TEST);
 
 		//noLoop();
-		
+
 		drawLayer.endDraw();
+		//p5.image(drawLayer, (p5.width * 0.5f) - drawLayer.width * 0.5f, 0);
 		p5.image(drawLayer, 0, 0);
+
 	}
 
 	void createSolids(int count) {
@@ -195,8 +196,40 @@ public class PlatonicSolids extends Clip {
 			newSolid.setLineWeight(0.08f);
 			//newSolid.setMaxAbsoluteScale(solids.get(0).maxAbsoluteScale * 0.5);
 			newSolid.setDrawLayer(drawLayer);
-			
+
 			solids.add(newSolid);
+		}
+	}
+
+	public void setSolidsGrowVel(float vel) {
+		for (Solid solido : solids) {
+			solido.growVel = vel;
+		}
+	}
+	
+	public void setStage(int stage){
+		if (stage == 1) {
+			createSolids(5);
+			for (Solid solido : solids) {
+				solido.growVel = 1.08f;
+				solido.hasFill = true;
+				solido.hasStroke = true;
+				solido.maxAbsoluteScale = 400;
+				solido.setLineWeight(10);
+				solido.setColor(drawLayer.color(p5.random(255)));
+			}
+		}
+
+		if (stage == 2) {
+			createSolids(5);
+
+			for (Solid solido : solids) {
+				solido.growVel = 1.1f;
+				solido.hasFill = false;
+				solido.hasStroke = true;
+				solido.maxAbsoluteScale = 1000;
+				solido.setLineWeight(40);
+			}
 		}
 	}
 
@@ -268,5 +301,75 @@ public class PlatonicSolids extends Clip {
 			}
 		}
 	}
+
+	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
+
+	public void recieveControllerChange(int channel, int number, int value) {
+		p5.println(channel + " | " + number + " | " + value);
+		if (channel == 0) {
+
+			if (number == 0) {
+				camAnimIncrement.x = p5.map(value, 0, 127, 0, 0.5f);
+			}
+
+			if (number == 1) {
+				setSolidsGrowVel(p5.map(value, 0, 127, 1, 1.5f));
+			}
+			
+			if (number == 2) {
+				setStage(atStage = 1);
+			} 
+			if (number == 3) {
+				setStage(atStage = 2);
+			}
+
+		}
+
+		if (channel == 1) {
+			if (number == 0) {
+				camAnimIncrement.y = p5.map(value, 0, 127, 0, 0.5f);
+			}
+
+			if (number == 1) {
+			}
+		}
+
+		if (channel == 2) {
+			if (number == 1) {
+			}
+		}
+
+		if (channel == 3) {
+			if (number == 1) {
+			}
+		}
+
+		if (channel == 4) {
+			if (number == 0) {
+			}
+
+			if (number == 1) {
+			}
+		}
+
+	}
+
+	public void recieveNoteOn(int channel, int pitch, int velocity) {
+		p5.println(channel + " | " + pitch + " | " + velocity);
+		if (channel == 0) {
+			if (pitch == 2) {
+				setStage(atStage = 1);
+			} else if (pitch == 3) {
+				setStage(atStage = 2);
+			}
+		}
+
+	}
+
+	public void recieveNoteOff(int channel, int pitch, int velocity) {
+		p5.println(channel + " | " + pitch + " | " + velocity);
+	}
+
+	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
 }

@@ -25,9 +25,9 @@ public class Clip {
 
 		name = "??";
 
-		int layerBoxSize = p5.height; // RESOLUCION Q SE LA BANCA
+		PVector layerBoxSize = new PVector(p5.width,p5.height); // RESOLUCION Q SE LA BANCA
 		
-		drawLayer = p5.createGraphics(layerBoxSize, layerBoxSize, rendererType); // SI PONGO P2D, EL FRAMERATE DROPPEA MAAAAALL..!!
+		drawLayer = p5.createGraphics((int)layerBoxSize.x, (int)layerBoxSize.y, rendererType); // SI PONGO P2D, EL FRAMERATE DROPPEA MAAAAALL..!!
 
 		triggers = new boolean[5];
 		for (int i = 0; i < triggers.length; i++) {

@@ -8,9 +8,9 @@ import globals.Clip;
 
 public class SpaceCreature extends Clip {
 
-	PeasyCam cam;
+	//PeasyCam cam;
 
-	float seaSize = 1000;
+	PVector seaSize;
 	float creatureCount = 20;
 	Creature bicho;
 
@@ -26,6 +26,9 @@ public class SpaceCreature extends Clip {
 	boolean enableColorDimer = false;
 	boolean enableSpikesLength = false;
 
+	float camDistance;
+	float camAngle, camAngleIncrement;
+
 	public SpaceCreature(String _rendererType) {
 		super(_rendererType);
 	}
@@ -33,35 +36,39 @@ public class SpaceCreature extends Clip {
 	@Override
 	public void load() {
 		super.load();
+		
+		seaSize = new PVector(drawLayer.width,drawLayer.height);
 
-		cam = new PeasyCam(p5, 3000);
-		cam.setMinimumDistance(20);
-		cam.setMaximumDistance(5000);
+		p5.imageMode(p5.CORNER);
+		//cam = new PeasyCam(p5, 3000);
+		//cam.setMinimumDistance(20);
+		//cam.setMaximumDistance(5000);
 
 		generateColorPairs();
 
 		// EL BICHO CENTRAL, EL PRIMERO
-
 		bicho = new Creature();
+		bicho.setDrawLayer(drawLayer);
 		bicho.setPosition(new PVector());
-		bicho.setOscillation(random(100), random(0.1));
-		bicho.setSize(random(10, 20), random(21, 100));
-		bicho.setSkinType(floor(random(2.99)));
-		int randomColorPair = floor(random(colorPairs.length));
+		bicho.setOscillation(p5.random(100), p5.random(0.1f));
+		bicho.setSize(p5.random(10, 20), p5.random(21, 100));
+		bicho.setSkinType(p5.floor(p5.random(2.99f)));
+		int randomColorPair = p5.floor(p5.random(colorPairs.length));
 		bicho.setColors(colorPairs[randomColorPair][0], colorPairs[randomColorPair][1]);
 		//println("-|| Color Pair: " + randomColorPair);
 
 		bichos = new ArrayList<Creature>();
 
 		for (int i = 0; i < creatureCount; i++) {
-			PVector spawnPosition = new PVector(random(-seaSize, seaSize), random(-seaSize * 0.1, seaSize * 0.1), random(-seaSize, seaSize));
+			PVector spawnPosition = new PVector(p5.random(-seaSize.x, seaSize.x), p5.random(-seaSize.y * 0.1f, seaSize.y * 0.1f), p5.random(-seaSize.z, seaSize.z));
 
 			Creature newBicho = new Creature();
+			newBicho.setDrawLayer(drawLayer);
 			newBicho.setPosition(spawnPosition);
-			newBicho.setOscillation(random(100), random(0.1));
-			newBicho.setSize(random(10, 20), random(21, 100));
+			newBicho.setOscillation(p5.random(100), p5.random(0.1f));
+			newBicho.setSize(p5.random(10, 20), p5.random(21, 100));
 			newBicho.setSkinType(0);
-			randomColorPair = floor(random(colorPairs.length));
+			randomColorPair = p5.floor(p5.random(colorPairs.length));
 			newBicho.setColors(colorPairs[randomColorPair][0], colorPairs[randomColorPair][1]);
 
 			bichos.add(newBicho);
@@ -69,10 +76,16 @@ public class SpaceCreature extends Clip {
 
 		setPrimaryBicho();
 
-		seaFlow = new FlowCloud(new PVector(seaSize, seaSize, seaSize));
+		seaFlow = new FlowCloud(new PVector(seaSize.x, seaSize.y, seaSize.z));
+		seaFlow.setDrawLayer(drawLayer);
 		seaFlow.setColorPair(colorPairs[0][0], colorPairs[0][1]);
 
-		moonSurface = new Surface(seaSize);
+		moonSurface = new Surface(seaSize.x);
+		moonSurface.setDrawLayer(drawLayer);
+
+		camDistance = 100;
+		camAngle = 0;
+		camAngleIncrement = 0.001f;
 	}
 
 	@Override
@@ -81,6 +94,10 @@ public class SpaceCreature extends Clip {
 		drawLayer.beginDraw();
 
 		drawLayer.background(0);
+
+		cameraProcedures();
+
+		//drawLayer.box(100);
 
 		/*
 		cam.beginHUD();
@@ -95,12 +112,12 @@ public class SpaceCreature extends Clip {
 		// INTERACTIVITY AND TRIGGERS. Also at keyPressed
 		if (enableColorDimer) {
 			for (int i = 0; i < bichos.size(); i++) {
-				bichos.get(i).opacityMultiplier = map(mouseY, height, 0, 0, 1);
+				bichos.get(i).opacityMultiplier = p5.map(p5.mouseY, p5.height, 0, 0, 1);
 			}
 		}
 		if (enableSpikesLength) {
 			for (int i = 0; i < bichos.size(); i++) {
-				bichos.get(i).spikesLengthMultiplier = map(mouseY, height, 0, 0, 5);
+				bichos.get(i).spikesLengthMultiplier = p5.map(p5.mouseY, p5.height, 0, 0, 5);
 			}
 		}
 
@@ -115,7 +132,7 @@ public class SpaceCreature extends Clip {
 		bicho.render();
 
 		drawLayer.pushMatrix();
-		drawLayer.translate(0, 0, -seaSize);
+		drawLayer.translate(0, 0, -seaSize.x);
 		for (int i = 0; i < bichos.size(); i++) {
 			bichos.get(i).update();
 			bichos.get(i).render();
@@ -128,6 +145,17 @@ public class SpaceCreature extends Clip {
 		drawLayer.endDraw();
 
 		p5.image(drawLayer, 0, 0);
+	}
+
+	public void cameraProcedures() {
+		float camX = camDistance * p5.cos(camAngle);
+		float camZ = camDistance * p5.sin(camAngle);
+
+		drawLayer.camera(camX, p5.mouseY * -10, camZ, 0, 0, 0, 0, 1, 0); // (Eye, Center, AxisAlign)
+
+		camDistance += 0.5f;
+		//camAngle += camAngleIncrement;
+		camAngle = p5.map(p5.mouseX, 0, p5.width, 0, p5.TWO_PI);
 	}
 
 	public void generateColorPairs() {
@@ -147,10 +175,10 @@ public class SpaceCreature extends Clip {
 
 		Creature firstBicho = bichos.get(0);
 		firstBicho.setPosition(new PVector());
-		firstBicho.setOscillation(random(10), 0.05);
+		firstBicho.setOscillation(p5.random(10), 0.05f);
 		firstBicho.setSize(15, 80);
 		firstBicho.setSkinType(0);
-		int randomColorPair = floor(p5.random(colorPairs.length));
+		int randomColorPair = p5.floor(p5.random(colorPairs.length));
 		firstBicho.setColors(colorPairs[randomColorPair][0], colorPairs[randomColorPair][1]);
 		firstBicho.trigger();
 		firstBicho.opacityMultiplier = 0;
@@ -160,11 +188,11 @@ public class SpaceCreature extends Clip {
 		// GROUND PLANE
 
 		drawLayer.pushMatrix();
-		drawLayer.translate(0, seaSize * 0.6f, 0);
+		drawLayer.translate(0, seaSize.x * 0.6f, 0);
 		drawLayer.rotateX(p5.HALF_PI);
 		drawLayer.rectMode(p5.CENTER);
 		drawLayer.fill(0);
-		drawLayer.rect(0, 0, seaSize * 10, seaSize * 10);
+		drawLayer.rect(0, 0, seaSize.x * 10, seaSize.y * 10);
 		drawLayer.popMatrix();
 	}
 
@@ -172,7 +200,7 @@ public class SpaceCreature extends Clip {
 		// SCENE BOUNDING BOX
 		drawLayer.noFill();
 		drawLayer.stroke(50);
-		drawLayer.box(seaSize * 2);
+		drawLayer.box(seaSize.x * 2);
 	}
 
 	public void drawAxisGizmo(PVector position, float size) {
@@ -192,7 +220,7 @@ public class SpaceCreature extends Clip {
 		drawLayer.fill(255, 0, 0);
 		drawLayer.stroke(255, 0, 0);
 		drawLayer.line(0, 0, 0, gizmoSize, 0, 0);
-		drawLayer.// box(100);
+		//drawLayer.box(100);
 		// Y
 		drawLayer.fill(0, 255, 0);
 		drawLayer.stroke(0, 255, 0);
@@ -201,22 +229,22 @@ public class SpaceCreature extends Clip {
 		drawLayer.fill(0, 0, 255);
 		drawLayer.stroke(0, 0, 255);
 		drawLayer.line(0, 0, 0, 0, 0, gizmoSize);
-        
+
 		drawLayer.popMatrix();
 	}
 
 	public void drawMouseCoordinates() {
 		// MOUSE POSITION
 		p5.fill(255, 255, 0);
-		p5.text("FR: " + frameRate, 20, 20);
-		p5.text("X: " + mouseX + " | Y: " + mouseY, mouseX, mouseY);
+		p5.text("FR: " + p5.frameRate, 20, 20);
+		p5.text("X: " + p5.mouseX + " | Y: " + p5.mouseY, p5.mouseX, p5.mouseY);
 	}
-	
+
 	@Override
 	public void onKeyPressed(char key) {
 
 		if (key == 'f') {
-			bichos.get(floor(random(bichos.size()))).radiusMaxMultiplier = random(8, 15);
+			bichos.get(p5.floor(p5.random(bichos.size()))).radiusMaxMultiplier = p5.random(8, 15);
 		}
 
 		if (key == 's') {
@@ -233,18 +261,19 @@ public class SpaceCreature extends Clip {
 		}
 
 		if (key == 'w') {
-			int randomBicho = floor(random(bichos.size()));
+			int randomBicho = p5.floor(p5.random(bichos.size()));
 			bichos.get(randomBicho).swimMultiplier = 5;
 			bichos.get(randomBicho).radiusMaxMultiplier = p5.random(8, 15);
 		}
 
 		if (key == 'p') {
-			int randomColor = floor(p5.random(colorPairs.length * 2));
+			int randomColor = p5.floor(p5.random(colorPairs.length * 2));
 			int selected = colorPairs[p5.floor(randomColor * 0.5f)][randomColor % 2];
 			seaFlow.setColorPair(seaFlow.colorPair[1], selected);
 		}
 
 		if (key == ' ') {
+			p5.println("-|| Unhiding next Bicho");
 			bichos.get(bichosStartCounter % bichos.size()).trigger();
 			bichosStartCounter++;
 		}
@@ -253,7 +282,5 @@ public class SpaceCreature extends Clip {
 			moonSurface.trigger();
 		}
 	}
-	
-	
 
 }

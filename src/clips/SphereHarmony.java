@@ -69,6 +69,7 @@ public class SphereHarmony extends Clip {
 	@Override
 	public void start() {
 		super.start();
+		p5.imageMode(p5.CORNER);
 		p5.println("-|| STARTING: " + name);
 	}
 
@@ -80,6 +81,7 @@ public class SphereHarmony extends Clip {
 
 	@Override
 	public void render() {
+		
 		drawLayer.beginDraw();
 		//background(0);
 		drawLayer.fill(0, 5);
@@ -95,7 +97,7 @@ public class SphereHarmony extends Clip {
 
 		drawLayer.endDraw();
 
-		p5.image(drawLayer, p5.width * 0.5f, p5.height * 0.5f);
+		p5.image(drawLayer, 0,0);
 
 	}
 
