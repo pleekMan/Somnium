@@ -1,14 +1,12 @@
 package globals;
 
 import java.util.ArrayList;
-
+import controls.AudioController;
 import clips.SphereHarmony;
 import clips.lunarDrone.LunarDrone;
 import clips.moonEclipse.MoonEclipse;
 import clips.platonicSolids.PlatonicSolids;
 import clips.spaceCreatures.SpaceCreature;
-//import processing.core.PGraphics;
-//import processing.core.PImage;
 import clips.transition.Fader;
 
 public class ClipManager {
@@ -23,6 +21,7 @@ public class ClipManager {
 	//PImage mask;
 
 	Fader fader;
+	AudioController audioIn;
 
 	public ClipManager() {
 		p5 = getP5();
@@ -36,6 +35,7 @@ public class ClipManager {
 		//mask = p5.loadImage("OctagonaMask.png");
 
 		fader = new Fader();
+		audioIn = new AudioController();
 	}
 
 	public void update() {
@@ -61,6 +61,8 @@ public class ClipManager {
 		//p5.image(mask, LightsManager.center.x, LightsManager.center.y, LightsManager.getBoundingBoxDimension(), LightsManager.getBoundingBoxDimension());
 
 		fader.render();
+		
+
 
 		// EDIT MODE DISPLAY -------------------------------
 
@@ -81,8 +83,10 @@ public class ClipManager {
 			p5.text("Playing Clip: " + playingClip + "/" + clips.size(), 20, 60);
 
 			drawClipNavigator();
+			
+			// RENDER AUDIO VUMETERS
+			audioIn.render();
 
-			// DISPLAY WHICH LAYER IS BEING USED FOR THE LIGHTS
 		}
 
 	}
@@ -265,6 +269,11 @@ public class ClipManager {
 	public void recieveControllerChange(int channel, int number, int value) {
 		//p5.println("Controller :: " + channel + " | " + number + " | " + value);
 		
+		if(channel == 6){
+			if(number == 1){
+				audioIn.setThreshold(p5.norm(value, 0, 127));
+			}
+		}
 		// CLIP GLOBAL CONTROLS
 		if (channel == 9) {
 			if(number == 10){
