@@ -31,7 +31,7 @@ public class FlowCloud {
 
 		for (int i = 0; i < particlesPosition.length; i++) {
 			particlesPosition[i] = new PVector(p5.random(size.x), p5.random(size.y), p5.random(size.z));
-			particlesVelocity[i] = new PVector(0, 0, p5.random(5, 20));
+			particlesVelocity[i] = new PVector(0, 0, p5.random(1, 5));
 		}
 	}
 	
@@ -39,9 +39,9 @@ public class FlowCloud {
 		drawLayer = _drawLayer;
 	}
 	public void render() {
-		drawLayer.stroke(255);
+		//drawLayer.stroke(255);
 		drawLayer.strokeWeight(2);
-		//noFill();
+		//drawLayer.noFill();
 		//noStroke();
 
 		drawLayer.pushMatrix();

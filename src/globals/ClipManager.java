@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import clips.SphereHarmony;
 import clips.lunarDrone.LunarDrone;
+import clips.moonEclipse.MoonEclipse;
 import clips.platonicSolids.PlatonicSolids;
 import clips.spaceCreatures.SpaceCreature;
 //import processing.core.PGraphics;
@@ -163,6 +164,13 @@ public class ClipManager {
 			spaceCreatures.setName("SPACE CREATURES");
 			clips.add(spaceCreatures);
 			System.out.println("-|| Loaded :> " + spaceCreatures.getName());
+			break;
+		case '5':
+			MoonEclipse moonEclipse = new MoonEclipse(p5.P2D);
+			moonEclipse.load();
+			moonEclipse.setName("MOON ECLIPSE");
+			clips.add(moonEclipse);
+			System.out.println("-|| Loaded :> " + moonEclipse.getName());
 			break;
 		default:
 			// System.out.println("No Clip Found at: " + selectedClip);

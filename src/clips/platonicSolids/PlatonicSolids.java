@@ -305,7 +305,7 @@ public class PlatonicSolids extends Clip {
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
 
 	public void recieveControllerChange(int channel, int number, int value) {
-		p5.println(channel + " | " + number + " | " + value);
+		//p5.println(channel + " | " + number + " | " + value);
 		if (channel == 0) {
 
 			if (number == 0) {
@@ -317,9 +317,12 @@ public class PlatonicSolids extends Clip {
 			}
 			
 			if (number == 2) {
-				setStage(atStage = 1);
+				setStage(atStage = 0);
 			} 
 			if (number == 3) {
+				setStage(atStage = 1);
+			}
+			if (number == 4) {
 				setStage(atStage = 2);
 			}
 
@@ -330,26 +333,6 @@ public class PlatonicSolids extends Clip {
 				camAnimIncrement.y = p5.map(value, 0, 127, 0, 0.5f);
 			}
 
-			if (number == 1) {
-			}
-		}
-
-		if (channel == 2) {
-			if (number == 1) {
-			}
-		}
-
-		if (channel == 3) {
-			if (number == 1) {
-			}
-		}
-
-		if (channel == 4) {
-			if (number == 0) {
-			}
-
-			if (number == 1) {
-			}
 		}
 
 	}

@@ -27,7 +27,11 @@ public class SpaceCreature extends Clip {
 	boolean enableSpikesLength = false;
 
 	float camDistance;
+	float camDistanceVel;
 	float camAngle, camAngleIncrement;
+	float camX, camY, camZ;
+
+	boolean enableTrailing = false;
 
 	public SpaceCreature(String _rendererType) {
 		super(_rendererType);
@@ -36,8 +40,8 @@ public class SpaceCreature extends Clip {
 	@Override
 	public void load() {
 		super.load();
-		
-		seaSize = new PVector(drawLayer.width,drawLayer.height);
+
+		seaSize = new PVector(drawLayer.width, drawLayer.height, drawLayer.width);
 
 		p5.imageMode(p5.CORNER);
 		//cam = new PeasyCam(p5, 3000);
@@ -84,6 +88,7 @@ public class SpaceCreature extends Clip {
 		moonSurface.setDrawLayer(drawLayer);
 
 		camDistance = 100;
+		camDistanceVel = 0;
 		camAngle = 0;
 		camAngleIncrement = 0.001f;
 	}
@@ -93,7 +98,12 @@ public class SpaceCreature extends Clip {
 
 		drawLayer.beginDraw();
 
-		drawLayer.background(0);
+		if (enableTrailing) {
+			drawLayer.fill(5,0);
+			drawLayer.rect(0,0,drawLayer.width, drawLayer.height);
+		} else {
+			drawLayer.background(0);
+		}
 
 		cameraProcedures();
 
@@ -139,7 +149,7 @@ public class SpaceCreature extends Clip {
 		}
 		drawLayer.popMatrix();
 
-		//drawGroundPlane();
+		drawGroundPlane();
 		//drawSceneBoundingBox();
 
 		drawLayer.endDraw();
@@ -148,14 +158,14 @@ public class SpaceCreature extends Clip {
 	}
 
 	public void cameraProcedures() {
-		float camX = camDistance * p5.cos(camAngle);
-		float camZ = camDistance * p5.sin(camAngle);
+		camX = camDistance * p5.cos(camAngle);
+		camZ = camDistance * p5.sin(camAngle);
 
-		drawLayer.camera(camX, p5.mouseY * -10, camZ, 0, 0, 0, 0, 1, 0); // (Eye, Center, AxisAlign)
+		drawLayer.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0); // (Eye, Center, AxisAlign)
 
-		camDistance += 0.5f;
+		camDistance += camDistanceVel;
 		//camAngle += camAngleIncrement;
-		camAngle = p5.map(p5.mouseX, 0, p5.width, 0, p5.TWO_PI);
+		//camAngle = p5.map(p5.mouseX, 0, p5.width, 0, p5.TWO_PI);
 	}
 
 	public void generateColorPairs() {
@@ -184,6 +194,12 @@ public class SpaceCreature extends Clip {
 		firstBicho.opacityMultiplier = 0;
 	}
 
+	public void triggerBichoNext() {
+		p5.println("-|| Unhiding next Bicho");
+		bichos.get(bichosStartCounter % bichos.size()).trigger();
+		bichosStartCounter++;
+	}
+
 	void drawGroundPlane() {
 		// GROUND PLANE
 
@@ -192,6 +208,7 @@ public class SpaceCreature extends Clip {
 		drawLayer.rotateX(p5.HALF_PI);
 		drawLayer.rectMode(p5.CENTER);
 		drawLayer.fill(0);
+		drawLayer.noStroke();
 		drawLayer.rect(0, 0, seaSize.x * 10, seaSize.y * 10);
 		drawLayer.popMatrix();
 	}
@@ -272,14 +289,70 @@ public class SpaceCreature extends Clip {
 			seaFlow.setColorPair(seaFlow.colorPair[1], selected);
 		}
 
+		/*
 		if (key == ' ') {
 			p5.println("-|| Unhiding next Bicho");
 			bichos.get(bichosStartCounter % bichos.size()).trigger();
 			bichosStartCounter++;
 		}
+		*/
 
 		if (key == '3') {
-			moonSurface.trigger();
+			//moonSurface.trigger();
+		}
+	}
+
+	@Override
+	public void recieveControllerChange(int channel, int number, int value) {
+		if (channel == 0) {
+
+			// CAM ANGLE
+			if (number == 0) {
+				camAngle = p5.map(value, 0, 127, 0, p5.TWO_PI);
+				p5.println("-|| CamAngle Horiz = " + camAngle);
+			}
+
+			// CAM DISTANCE
+			if (number == 1) {
+				camDistanceVel = p5.map(value, 0, 127, 0, 2);
+				p5.println("-|| CamDistanceVel = " + camDistanceVel);
+
+			}
+
+			if (number == 2) {
+				triggerBichoNext();
+			}
+
+			if (number == 3) {
+				moonSurface.trigger();
+			}
+
+			if (number == 4) {
+				enableTrailing = !enableTrailing;
+			}
+		}
+
+		if (channel == 1) {
+
+			// CAM Y POS
+			if (number == 0) {
+				camY = p5.map(value, 0, 127, 0, -seaSize.y * 5);
+				p5.println("-|| CamY = " + camY);
+			}
+
+			if (number == 1) {
+				camDistance = p5.map(value, 0, 127, 0, seaSize.y * 10);
+				p5.println("-|| CamDistance = " + camDistance);
+			}
+
+		}
+
+		if (channel == 2) {
+			// MOON SURFACE ALPHA
+			if (number == 1) {
+				moonSurface.setOpacity(p5.map(value, 0, 127, 0, 1));
+				p5.println("-|| Moon Surface Opacity = " + moonSurface.alphaMultiplier);
+			}
 		}
 	}
 

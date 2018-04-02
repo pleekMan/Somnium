@@ -139,6 +139,10 @@ public class Surface {
 	public void trigger() {
 		starting = true;
 	}
+	
+	public void setOpacity(float a){
+		alphaMultiplier = a;
+	}
 
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
