@@ -25,6 +25,14 @@ public class PlatonicSolids extends Clip {
 	float maxCamRadius;
 
 	int atStage;
+	
+	int colorPairs[]; // colors
+	int currentColorA = 0;
+	int currentColorB = 1;
+	static public int currentColor = 0;
+	float colorInterpolation = 0;
+	float colorInterpolationVel = 0.01f;
+
 
 	public PlatonicSolids(String rendererType) {
 		super(rendererType);
@@ -58,6 +66,10 @@ public class PlatonicSolids extends Clip {
 		drawLayer.textureMode(p5.NORMAL);
 		drawLayer.noStroke();
 		drawLayer.endDraw();
+		
+		// COLOR PAIRS
+		generateColorPairs();
+		
 	}
 
 	void initScene() {
@@ -73,10 +85,33 @@ public class PlatonicSolids extends Clip {
 			//solido.setTexture(sunImage);
 		}
 	}
+	
+	public void generateColorPairs() {
+		colorPairs = new int[8];
+
+		colorPairs[0] = p5.color(200, 200, 0);
+		colorPairs[1] = p5.color(0, 200, 200);
+		colorPairs[2] = p5.color(200, 30, 0);
+		colorPairs[3] = p5.color(255, 240, 0);
+		colorPairs[4] = p5.color(0, 127, 255);
+		colorPairs[5] = p5.color(255, 0, 160);
+		colorPairs[6] = p5.color(235, 0, 200);
+		colorPairs[7] = p5.color(120, 255, 167);
+	}
 
 	@Override
 	public void render() {
 		//background(backPaper);
+		
+		// COLOR SHIT
+		colorInterpolation += colorInterpolationVel;
+		if(colorInterpolation > 0.99){
+			currentColorA = currentColorB;
+			currentColorB = p5.floor(p5.random(colorPairs.length));
+			colorInterpolation = 0;
+		}
+		currentColor = p5.lerpColor(colorPairs[currentColorA], colorPairs[currentColorB], colorInterpolation);
+		
 		drawLayer.beginDraw();
 		drawLayer.background(0);
 
@@ -87,6 +122,7 @@ public class PlatonicSolids extends Clip {
 			drawLayer.resetMatrix();
 			drawLayer.rect(0, 0, drawLayer.width, drawLayer.height);
 		}
+		
 		drawLayer.lights();
 
 		//camX = map(mouseX, 0, width, -500, 500);
@@ -209,9 +245,9 @@ public class PlatonicSolids extends Clip {
 	
 	public void setStage(int stage){
 		if (stage == 1) {
-			createSolids(5);
+			//createSolids(5);
 			for (Solid solido : solids) {
-				solido.growVel = 1.08f;
+				solido.growVel = 1.008f;
 				solido.hasFill = true;
 				solido.hasStroke = true;
 				solido.maxAbsoluteScale = 400;
@@ -221,7 +257,7 @@ public class PlatonicSolids extends Clip {
 		}
 
 		if (stage == 2) {
-			createSolids(5);
+			//createSolids(5);
 
 			for (Solid solido : solids) {
 				solido.growVel = 1.1f;
@@ -313,7 +349,7 @@ public class PlatonicSolids extends Clip {
 			}
 
 			if (number == 1) {
-				setSolidsGrowVel(p5.map(value, 0, 127, 1, 1.5f));
+				setSolidsGrowVel(p5.map(value, 0, 127, 1, 1.25f));
 			}
 			
 			if (number == 2) {
@@ -332,13 +368,16 @@ public class PlatonicSolids extends Clip {
 			if (number == 0) {
 				camAnimIncrement.y = p5.map(value, 0, 127, 0, 0.5f);
 			}
+			if (number == 2) {
+				createSolids(5);
+			}
 
 		}
 
 	}
 
 	public void recieveNoteOn(int channel, int pitch, int velocity) {
-		p5.println(channel + " | " + pitch + " | " + velocity);
+		//p5.println(channel + " | " + pitch + " | " + velocity);
 		if (channel == 0) {
 			if (pitch == 2) {
 				setStage(atStage = 1);
@@ -350,7 +389,7 @@ public class PlatonicSolids extends Clip {
 	}
 
 	public void recieveNoteOff(int channel, int pitch, int velocity) {
-		p5.println(channel + " | " + pitch + " | " + velocity);
+		//p5.println(channel + " | " + pitch + " | " + velocity);
 	}
 
 	// EVENTS FROM A MIDI CONTROLLER - END ------------

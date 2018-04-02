@@ -21,7 +21,7 @@ public class ClipManager {
 	boolean editMode;
 
 	//PImage mask;
-	
+
 	Fader fader;
 
 	public ClipManager() {
@@ -34,10 +34,9 @@ public class ClipManager {
 		editMode = false;
 
 		//mask = p5.loadImage("OctagonaMask.png");
-		
+
 		fader = new Fader();
 	}
-
 
 	public void update() {
 		for (Clip clip : clips) {
@@ -60,9 +59,9 @@ public class ClipManager {
 
 		// RENDER MASK
 		//p5.image(mask, LightsManager.center.x, LightsManager.center.y, LightsManager.getBoundingBoxDimension(), LightsManager.getBoundingBoxDimension());
-		
+
 		fader.render();
-		
+
 		// EDIT MODE DISPLAY -------------------------------
 
 		if (editMode) {
@@ -230,6 +229,10 @@ public class ClipManager {
 			System.out.println("No Clip Found at: " + selectedClip);
 		}
 	}
+	
+	private void stopClip(){
+		getSelectedClip().stop();
+	}
 
 	public void toggleEditMode() {
 		editMode = !editMode;
@@ -260,16 +263,43 @@ public class ClipManager {
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
 
 	public void recieveControllerChange(int channel, int number, int value) {
-		clips.get(selectedClip).recieveControllerChange(channel, number, value);
-		fader.recieveControllerChange(channel, number, value);
+		//p5.println("Controller :: " + channel + " | " + number + " | " + value);
+		
+		// CLIP GLOBAL CONTROLS
+		if (channel == 9) {
+			if(number == 10){
+				goToPreviousClip();
+			}
+			if(number == 11){
+				goToNextClip();
+			}
+			if(number == 12){
+				stopClip();
+			}
+			if(number == 13){
+				triggerClip(selectedClip);
+			}
+			if(number == 13){
+				toggleEditMode();
+			}
+		} else {
+			// CLIP INNER CONTROLS
+			clips.get(selectedClip).recieveControllerChange(channel, number, value);
+			fader.recieveControllerChange(channel, number, value);
+		}
+
 	}
 
 	public void recieveNoteOn(int channel, int pitch, int velocity) {
 		clips.get(selectedClip).recieveNoteOn(channel, pitch, velocity);
+		//p5.println("Note ON :: " + channel + " | " + pitch + " | " + velocity);
+
 	}
 
 	public void recieveNoteOff(int channel, int pitch, int velocity) {
 		clips.get(selectedClip).recieveNoteOff(channel, pitch, velocity);
+		//p5.println("Note OFF :: " + channel + " | " + pitch + " | " + velocity);
+
 	}
 
 	// EVENTS FROM A MIDI CONTROLLER - END ------------

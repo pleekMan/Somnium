@@ -54,6 +54,7 @@ public class Solid {
 	      scale = p5.random(0.001f,0.01f);
 	      
 	      visible = p5.random(1) > 0.5 ? true : false;
+	      setColor(PlatonicSolids.currentColor);
 	    }
 	  }
 

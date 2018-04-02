@@ -227,7 +227,7 @@ public class SphereHarmony extends Clip {
 		    }
 
 		    if (number == 1) {
-		      pointSize = p5.map(value, 0, 127, 1, 300);
+		      pointSize = p5.map(value, 0, 127, 1, 200);
 		    }
 		  }
 

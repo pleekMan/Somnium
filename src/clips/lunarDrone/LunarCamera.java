@@ -7,7 +7,7 @@ import globals.PAppletSingleton;
 
 public class LunarCamera {
 	Main p5;
-	PVector masterTransform;
+	PVector masterTransform, masterTransformVel;
 	PVector target;
 	PVector camOffset;
 	PVector camPosition;
@@ -18,13 +18,14 @@ public class LunarCamera {
 		p5 = getP5();
 
 		masterTransform = new PVector();
+		masterTransformVel = new PVector();
 		target = new PVector();
 		camPosition = new PVector();
 		camOffset = new PVector(200, -150, 100);
 	}
 
 	void update() {
-		masterTransform.add(0, 0, -0.5f);
+		masterTransform.add(masterTransformVel);
 
 		camPosition.set(PVector.add(masterTransform, camOffset));
 		target.set(masterTransform);
@@ -60,8 +61,12 @@ public class LunarCamera {
 		drawLayer = dLayer;
 	}
 
-	void setAltitude(float alt) {
+	public void setAltitude(float alt) {
 		camOffset.y = alt;
+	}
+	
+	public void setVelocity(float forwardVel){
+		masterTransformVel.set(0, 0, -forwardVel);
 	}
 
 	protected Main getP5() {

@@ -56,7 +56,7 @@ public class FlowCloud {
 			}
 
 			drawLayer.stroke(p5.lerpColor(colorPair[0], colorPair[1], (particlesPosition[i].z / size.z)));
-			drawLayer.line(particlesPosition[i].x, particlesPosition[i].y, particlesPosition[i].z, particlesPosition[i].x - particlesVelocity[i].x * 5, particlesPosition[i].y - particlesVelocity[i].y * 5, particlesPosition[i].z - particlesVelocity[i].z * 5);
+			drawLayer.line(particlesPosition[i].x, particlesPosition[i].y, particlesPosition[i].z, particlesPosition[i].x - particlesVelocity[i].x * 10, particlesPosition[i].y - particlesVelocity[i].y * 10, particlesPosition[i].z - particlesVelocity[i].z * 10);
 			//vertex(particlesPosition[i].x, particlesPosition[i].y, particlesPosition[i].z);  
 		}
 		//drawLayer.endShape();
