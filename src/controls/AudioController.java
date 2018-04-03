@@ -23,11 +23,14 @@ public class AudioController {
 		umbral = 0.5f;
 		audioLevelMultiplier = 5;
 	}
+	
+	public void update(){
+		amplifiedAudioLevel = audioIn.left.level() * audioLevelMultiplier;
+		//umbral = p5.map(p5.mouseY, p5.height, p5.height * 0.5f, 0, 1);
+	}
 
 	public void render() {
 
-		amplifiedAudioLevel = audioIn.left.level() * audioLevelMultiplier;
-		//umbral = p5.map(p5.mouseY, p5.height, p5.height * 0.5f, 0, 1);
 		
 		// VUMETERS
 		p5.stroke(0, 127, 127);
@@ -51,6 +54,13 @@ public class AudioController {
 	
 	public void setThreshold(float value){
 		umbral = value;
+		p5.println("-|| AUDIO :: Multiplier: " + p5.nf(audioLevelMultiplier,0,1) + "\t Threshold: " + p5.nf(umbral,0,1));
+
+	}
+	
+	public void setAmpMultiplier(float ampMult){
+		audioLevelMultiplier = ampMult;
+		p5.println("-|| AUDIO :: Multiplier: " + p5.nf(audioLevelMultiplier,0,1) + "\t Threshold: " + p5.nf(umbral,0,1));
 	}
 
 	protected Main getP5() {

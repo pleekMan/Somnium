@@ -29,6 +29,8 @@ public class SphereHarmony extends Clip {
 	int funcionTrigUsada;
 	float brillo;
 	float pointSize = 1;
+	
+	float circulosJump = 0;
 
 	public SphereHarmony(String rendererType) {
 		super(rendererType);
@@ -92,6 +94,9 @@ public class SphereHarmony extends Clip {
 		//drawLayer.fill(255);
 
 		//displaceRotation();
+		circulosJump = audioTrigger ? p5.frameCount % 4 : 1;
+
+		
 		calcularPosiciones();
 		//dibujarCirculo();
 
@@ -107,12 +112,12 @@ public class SphereHarmony extends Clip {
 
 		//fill(brillo, 127);
 		float rotationUnit = p5.TWO_PI / centroX.length;
-
+		
 		for (int j = 0; j < centroX.length; j++) {
 
 			float currentRotation = (rotationUnit * j) + rotacion4Circulos;
-			centroX[j] = (drawLayer.width * 0.5f) + (radio4Circulos * p5.cos(currentRotation));
-			centroY[j] = (drawLayer.height * 0.5f) + (radio4Circulos * p5.sin(currentRotation));
+			centroX[j] = (drawLayer.width * 0.5f) + ((radio4Circulos*circulosJump) * p5.cos(currentRotation));
+			centroY[j] = (drawLayer.height * 0.5f) + ((radio4Circulos*circulosJump) * p5.sin(currentRotation));
 
 			//toTint(j);
 

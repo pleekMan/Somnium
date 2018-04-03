@@ -123,11 +123,6 @@ public class LunarDrone extends Clip {
 
 		if (lightDark < 0.5f) {
 			canvasLunar.background(0);
-		} else {
-			canvasLunar.hint(p5.DISABLE_DEPTH_TEST);
-			canvasLunar.fill(255, 0, 0);
-			canvasLunar.rect(0, 0, canvasLunar.width, canvasLunar.height);
-			canvasLunar.hint(p5.ENABLE_DEPTH_TEST);
 		}
 
 		//canvasLunar.background(0,255,0);
@@ -271,7 +266,7 @@ public class LunarDrone extends Clip {
 			// CAM VELOCITY
 			if (number == 1) {
 				cam.setVelocity(p5.map(value, 0, 127, 0, 1));
-				p5.println("-|| LUNAR DRONE : Cam Velocity = " + cam.masterTransformVel);
+				p5.println("-|| LUNAR DRONE : Cam Velocity = " + cam.masterTransformVel.z);
 			}
 			
 			if (number == 2) {
@@ -283,15 +278,16 @@ public class LunarDrone extends Clip {
 		if (channel == 1) {
 			// LIGHT DARK CONTROL
 			if (number == 1) {
-				lightDarkControl = p5.map(value, 0, 127, 0, 1);
-				p5.println("-|| LUNAR DRONE : LIGHT | DARK = " + lightDarkControl);
+				cam.setAltitude(p5.map(value, 0, 127, -10, -1000));
+				p5.println("-|| LUNAR DRONE : Altitude = " + cam.camOffset.y / 1000);
 			}
 		}
 
 		// CAM ALTITUDE
 		if (channel == 2) {
 			if (number == 1) {
-				cam.setAltitude(p5.map(value, 0, 127, -10, -1000));
+				lightDarkControl = p5.map(value, 0, 127, 0, 1);
+				p5.println("-|| LUNAR DRONE : LIGHT | DARK = " + lightDarkControl);
 			}
 		}
 

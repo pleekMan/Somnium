@@ -36,16 +36,54 @@ public class ClipManager {
 
 		fader = new Fader();
 		audioIn = new AudioController();
+		
+		loadClipSequence();
+	}
+
+	private void loadClipSequence() {
+		SphereHarmony sphereHarmony = new SphereHarmony(p5.JAVA2D);
+		sphereHarmony.load();
+		sphereHarmony.setName("SPHERE HARMONY");
+		clips.add(sphereHarmony);
+		System.out.println("-|| Loaded :> " + sphereHarmony.getName());
+		
+		PlatonicSolids platonicSolids = new PlatonicSolids(p5.P3D);
+		platonicSolids.load();
+		platonicSolids.setName("PLATONIC SOLIDS");
+		clips.add(platonicSolids);
+		System.out.println("-|| Loaded :> " + platonicSolids.getName());
+
+		MoonEclipse moonEclipse = new MoonEclipse(p5.P2D);
+		moonEclipse.load();
+		moonEclipse.setName("MOON ECLIPSE");
+		clips.add(moonEclipse);
+		System.out.println("-|| Loaded :> " + moonEclipse.getName());	
+		
+		LunarDrone lunarDrone = new LunarDrone(p5.P2D);
+		lunarDrone.load();
+		lunarDrone.setName("LUNAR DRONE");
+		clips.add(lunarDrone);
+		System.out.println("-|| Loaded :> " + lunarDrone.getName());
+
+		SpaceCreature spaceCreatures = new SpaceCreature(p5.P3D);
+		spaceCreatures.load();
+		spaceCreatures.setName("SPACE CREATURES");
+		clips.add(spaceCreatures);
+		System.out.println("-|| Loaded :> " + spaceCreatures.getName());
+
+		
 	}
 
 	public void update() {
+		audioIn.update();
+		if (clips.get(selectedClip) != null) {
+			clips.get(selectedClip).setAudioTrigger(audioIn.isAboveThreshold());
+
+		}
 		for (Clip clip : clips) {
 			if (clip.isPlaying()) {
 				clip.update();
 				clip.resetTriggers();
-
-				// PGraphics layer1 = clip.getProjectionLayer();
-				// p5.image(layer1,0,0);
 			}
 		}
 	}
@@ -115,8 +153,8 @@ public class ClipManager {
 			}
 
 			// PLAYING CLIP NAME
-			p5.fill(200, 0, 0);
-			p5.stroke(200, 0, 0);
+			p5.fill(255, 255, 0);
+			p5.stroke(255, 255, 0);
 			String playingClipName = getPlayingClip().getName();
 			p5.text(playingClipName, 20, originY - 20);
 
@@ -228,6 +266,10 @@ public class ClipManager {
 
 			getSelectedClip().start();
 			playingClip = selectedClip;
+			
+			p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+			p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+			p5.println("-|| -----");
 
 		} else {
 			System.out.println("No Clip Found at: " + selectedClip);
@@ -255,13 +297,20 @@ public class ClipManager {
 		if (selectedClip > clips.size() - 1) {
 			selectedClip = clips.size() - 1;
 		}
-	}
+		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+		p5.println("-|| -----");
+}
 
 	public void goToPreviousClip() {
 		selectedClip--;
 		if (selectedClip < 0) {
 			selectedClip = 0;
 		}
+		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+		p5.println("-|| -----");
+
 	}
 
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
@@ -269,26 +318,31 @@ public class ClipManager {
 	public void recieveControllerChange(int channel, int number, int value) {
 		//p5.println("Controller :: " + channel + " | " + number + " | " + value);
 		
+		// AUDIO CONTROL
 		if(channel == 6){
+			if(number == 0){
+				audioIn.setAmpMultiplier(p5.map(value, 0, 127, 0.2f, 4));
+			}
 			if(number == 1){
 				audioIn.setThreshold(p5.norm(value, 0, 127));
 			}
 		}
+		
 		// CLIP GLOBAL CONTROLS
 		if (channel == 9) {
-			if(number == 10){
+			if(number == 10 && value >= 127){
 				goToPreviousClip();
 			}
-			if(number == 11){
+			if(number == 11 && value >= 127){
 				goToNextClip();
 			}
-			if(number == 12){
+			if(number == 12 && value >= 127){
 				stopClip();
 			}
-			if(number == 13){
+			if(number == 13 && value >= 127){
 				triggerClip(selectedClip);
 			}
-			if(number == 13){
+			if(number == 14 && value >= 127){
 				toggleEditMode();
 			}
 		} else {

@@ -2,6 +2,7 @@ package clips.platonicSolids;
 
 import java.util.ArrayList;
 
+import processing.core.PImage;
 import processing.core.PVector;
 import globals.Clip;
 
@@ -15,8 +16,8 @@ public class PlatonicSolids extends Clip {
 	//PImage backPaper;
 	int writeColor;
 
-	//Sun sun;
-	//PImage sunImage;
+	Sun sun;
+	PImage sunImage;
 	boolean showSun;
 
 	float camX, camY, camZ;
@@ -46,8 +47,9 @@ public class PlatonicSolids extends Clip {
 		//writeColor = color(75, 75, 60);
 		writeColor = drawLayer.color(250);
 
-		//sunImage = loadImage("sun.jpg");
-		//sun = new Sun(sunImage);
+		sunImage = p5.loadImage("sun.jpg");
+		sun = new Sun(sunImage);
+		sun.setDrawLayer(drawLayer);
 		showSun = true;
 
 		camX = camY = camZ = 0;
@@ -114,11 +116,13 @@ public class PlatonicSolids extends Clip {
 		
 		drawLayer.beginDraw();
 		drawLayer.background(0);
-
+		
+		showSun = audioTrigger;
+		
 		if (!showSun) {
 			drawLayer.background(0);
 		} else {
-			drawLayer.fill(0, 10);
+			drawLayer.fill(255);
 			drawLayer.resetMatrix();
 			drawLayer.rect(0, 0, drawLayer.width, drawLayer.height);
 		}
@@ -156,9 +160,16 @@ public class PlatonicSolids extends Clip {
 			actualSolid.update();
 			actualSolid.setLineWeight((1 - actualSolid.scale) * actualSolid.maxLineWeight);
 			actualSolid.setOpacity((1 - actualSolid.scale) * 255);
-			//if (actualSolid.visible) {
+			
+			if (audioTrigger) {
+				drawLayer.pushMatrix();
+				drawLayer.translate(p5.random(-300,300), 0);
+			}
 			actualSolid.render();
-			//}
+			
+			if (audioTrigger) {
+				drawLayer.popMatrix();
+			}
 		}
 
 		// MISC
@@ -182,13 +193,14 @@ public class PlatonicSolids extends Clip {
 		//hint(DISABLE_DEPTH_TEST);
 
 		// SUN
-		/*
+		
 		if (showSun) {
-			//resetMatrix();
-			sun.setColor(color(random(255), random(255), random(255)));
+			drawLayer.resetMatrix();
+			//sun.setColor(p5.color(p5.random(255), p5.random(255), p5.random(255)));
+			sun.setColor(p5.color(255));
 			sun.render();
 		}
-		*/
+		
 
 		//showSun = false;
 
@@ -369,7 +381,7 @@ public class PlatonicSolids extends Clip {
 				camAnimIncrement.y = p5.map(value, 0, 127, 0, 0.5f);
 			}
 			if (number == 2) {
-				createSolids(5);
+				createSolids(2);
 			}
 
 		}

@@ -83,8 +83,10 @@ public class Fader {
 			
 			if(number == 2){
 				setColor(p5.color(0));
+				p5.println("-|| FADER : BLACK");
 			} else if(number == 3){
 				setColor(p5.color(255));
+				p5.println("-|| FADER : WHITE");
 			}
 		}
 		

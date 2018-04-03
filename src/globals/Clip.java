@@ -14,6 +14,8 @@ public class Clip {
 	private String rendererType;
 	
 	protected boolean[] triggers;
+	
+	protected boolean audioTrigger = false;
 
 	public Clip(String _rendererType) {
 		p5 = getP5();
@@ -99,7 +101,10 @@ public class Clip {
 	}
 	
 	// EVENTS FROM A MIDI CONTROLLER - END ------------
-
+	
+	public void setAudioTrigger(boolean state){
+		audioTrigger = state;
+	}
 
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();

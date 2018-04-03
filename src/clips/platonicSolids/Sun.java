@@ -33,11 +33,27 @@ public class Sun {
 		tintColor = p5.color(255);
 	}
 
-	void setDrawLayer(PGraphics dLayer) {
+	public void setDrawLayer(PGraphics dLayer) {
 		drawLayer = dLayer;
 	}
 
 	void render() {
+
+		drawLayer.imageMode(p5.CENTER);
+		drawLayer.blendMode(p5.ADD);
+		//drawLayer.tint(tintColor);
+
+		drawLayer.pushMatrix();
+		drawLayer.translate(drawLayer.width * 0.5f, drawLayer.height * 0.5f);
+		drawLayer.image(sunImage, 0, 0, sunImage.width * scale, sunImage.height * scale);
+		drawLayer.popMatrix();
+
+		drawLayer.imageMode(p5.CORNER);
+
+		//scale *= scaleIncrement;
+	}
+	
+	void renderOld() {
 
 		x += velX;
 		y += velY;
