@@ -24,6 +24,8 @@ public class LunarDrone extends Clip {
 	float lightDarkControl = 0;
 	float lightDark = 0;
 	float camFov;
+	float camFovControlVel = 0;
+
 
 	int selectedCrater = 0;
 	float selectedCraterRotation;
@@ -103,6 +105,10 @@ public class LunarDrone extends Clip {
 		//FOV control
 		//float fov = p5.PI/3.0f;
 		//float camFov = p5.map(p5.mouseY, 0, p5.height, 0.1f, p5.TWO_PI);
+		
+		//camFov += camFovControlVel;
+		//camFov = p5.constrain(camFov, 0.1f, p5.PI);
+		
 		float camZ = (p5.height / 2.0f) / p5.tan(camFov / 2.0f);
 		canvasLunar.perspective(camFov, p5.width / (float) p5.height, camZ * 0.1f, camZ * 10);
 
@@ -122,7 +128,7 @@ public class LunarDrone extends Clip {
 		//canvasLunar.background(255 - (255 * lightDarkControl));
 
 		if (lightDark < 0.5f) {
-			canvasLunar.background(0);
+			canvasLunar.background(255);
 		}
 
 		//canvasLunar.background(0,255,0);
@@ -259,8 +265,20 @@ public class LunarDrone extends Clip {
 
 			// CAM FOV
 			if (number == 0) {
-				camFov = p5.map(value, 0, 127, p5.PI, 0.1f);
+				/*
+				camFovControlVel = p5.map(value, 0, 127, -0.1f, 0.1f);
+				if(camFovControlVel > -0.001f && camFovControlVel < 0.001f){
+					camFovControlVel = 0;
+				}
+				*/
+				
+				camFov = p5.map(value, 0, 127, p5.PI, 1.0f);
+				
+				//p5.println("-|| LUNAR DRONE : Cam FOV VEL = " + camFovControlVel);
 				p5.println("-|| LUNAR DRONE : Cam FOV = " + camFov);
+				//p5.println("-||");
+
+
 			}
 
 			// CAM VELOCITY
@@ -276,16 +294,21 @@ public class LunarDrone extends Clip {
 			}
 		}
 		if (channel == 1) {
-			// LIGHT DARK CONTROL
 			if (number == 1) {
-				cam.setAltitude(p5.map(value, 0, 127, -10, -1000));
-				p5.println("-|| LUNAR DRONE : Altitude = " + cam.camOffset.y / 1000);
+				// CAM ALTITUDE
+				
+				cam.setAltitude(p5.map(value, 0, 127, -3, 3));
+				p5.println("-|| LUNAR DRONE : AltitudeVel = " + cam.altitudeControlVel);
+				p5.println("-|| LUNAR DRONE : Altitude = " + cam.camOffset.y);
+				p5.println("-||");
+
 			}
 		}
 
 		// CAM ALTITUDE
 		if (channel == 2) {
 			if (number == 1) {
+				// LIGHT DARK CONTROL
 				lightDarkControl = p5.map(value, 0, 127, 0, 1);
 				p5.println("-|| LUNAR DRONE : LIGHT | DARK = " + lightDarkControl);
 			}

@@ -128,8 +128,7 @@ public class MoonEclipse extends Clip {
 
 	public void onKeyPressed(char key) {
 		if (key == 't') {
-			p5.println("||- MOON ECLIPSE: Start Eclipse");
-			enableEclipseTransition = !enableEclipseTransition;
+			
 		}
 	}
 	
@@ -145,6 +144,10 @@ public class MoonEclipse extends Clip {
 		    if (number == 1) {
 		    	earthVel.x = p5.map(value, 0, 127, 0, 0.2f);
 		    }
+		    
+		    if (number == 2 && value >= 127) {
+		    	p5.println("||- MOON ECLIPSE: Start Eclipse");
+				enableEclipseTransition = !enableEclipseTransition;		    }
 		}
 	}
 

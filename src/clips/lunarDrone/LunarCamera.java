@@ -11,7 +11,8 @@ public class LunarCamera {
 	PVector target;
 	PVector camOffset;
 	PVector camPosition;
-
+	float altitudeControlVel = 0;
+	
 	PGraphics drawLayer;
 
 	public LunarCamera() {
@@ -22,6 +23,9 @@ public class LunarCamera {
 		target = new PVector();
 		camPosition = new PVector();
 		camOffset = new PVector(200, -150, 100);
+		
+		altitudeControlVel = 0;
+		
 	}
 
 	void update() {
@@ -29,6 +33,9 @@ public class LunarCamera {
 
 		camPosition.set(PVector.add(masterTransform, camOffset));
 		target.set(masterTransform);
+		
+		camOffset.y += -altitudeControlVel;
+		camOffset.y = p5.constrain(camOffset.y, -10000, -10);
 	}
 
 	void render() {
@@ -62,7 +69,11 @@ public class LunarCamera {
 	}
 
 	public void setAltitude(float alt) {
-		camOffset.y = alt;
+		if(alt > -0.1 && alt < 0.1){
+			alt = 0;
+		}
+		altitudeControlVel = alt;
+		
 	}
 	
 	public void setVelocity(float forwardVel){

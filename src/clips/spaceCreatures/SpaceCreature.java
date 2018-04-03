@@ -99,8 +99,8 @@ public class SpaceCreature extends Clip {
 		drawLayer.beginDraw();
 
 		if (enableTrailing) {
-			drawLayer.fill(5,0);
-			drawLayer.rect(0,0,drawLayer.width, drawLayer.height);
+			drawLayer.fill(5, 0);
+			drawLayer.rect(0, 0, drawLayer.width, drawLayer.height);
 		} else {
 			drawLayer.background(0);
 		}
@@ -277,10 +277,12 @@ public class SpaceCreature extends Clip {
 			enableSpikesLength = !enableSpikesLength;
 		}
 
-		if (key == 'w') {
+		if (key == 'o') {
 			int randomBicho = p5.floor(p5.random(bichos.size()));
-			bichos.get(randomBicho).swimMultiplier = 5;
-			bichos.get(randomBicho).radiusMaxMultiplier = p5.random(8, 15);
+			bichos.get(randomBicho).triggerPositionTransition();
+
+			//bichos.get(randomBicho).swimMultiplier = 5;
+			//bichos.get(randomBicho).radiusMaxMultiplier = p5.random(8, 15);
 		}
 
 		if (key == 'p') {
@@ -309,22 +311,26 @@ public class SpaceCreature extends Clip {
 			// CAM ANGLE
 			if (number == 0) {
 				camAngle = p5.map(value, 0, 127, 0, p5.TWO_PI);
-				p5.println("-|| CamAngle Horiz = " + camAngle);
+				p5.println("-|| SPACE CREATURE : CamAngle Horiz = " + camAngle);
 			}
 
-			// CAM DISTANCE
+			// CAM DISTANCE VEL
 			if (number == 1) {
 				camDistanceVel = p5.map(value, 0, 127, 0, 2);
-				p5.println("-|| CamDistanceVel = " + camDistanceVel);
+				p5.println("-|| SPACE CREATURE : CamDistanceVel = " + camDistanceVel);
 
 			}
 
 			if (number == 2) {
 				triggerBichoNext();
+				p5.println("-|| SPACE CREATURE : TRIGGERING NEXT BICHO");
+
 			}
 
 			if (number == 3) {
 				moonSurface.trigger();
+				p5.println("-|| SPACE CREATURE : TRIGGERING MOON SURFACE");
+
 			}
 
 			if (number == 4) {
@@ -334,15 +340,21 @@ public class SpaceCreature extends Clip {
 
 		if (channel == 1) {
 
-			// CAM Y POS
+			// CamY POS
 			if (number == 0) {
 				camY = p5.map(value, 0, 127, 0, -seaSize.y * 5);
-				p5.println("-|| CamY = " + camY);
+				p5.println("-|| SPACE CREATURE : CamY = " + camY);
 			}
 
 			if (number == 1) {
 				camDistance = p5.map(value, 0, 127, 0, seaSize.y * 10);
-				p5.println("-|| CamDistance = " + camDistance);
+				p5.println("-|| SPACE CREATURE : CamDistance = " + camDistance);
+			}
+
+			if (number == 2 && value >= 127) {
+				int randomBicho = p5.floor(p5.random(bichos.size()));
+				bichos.get(randomBicho).triggerPositionTransition();
+				p5.println("-|| SPACE CREATURE : Bicho Jump = " + randomBicho);
 			}
 
 		}
@@ -351,7 +363,7 @@ public class SpaceCreature extends Clip {
 			// MOON SURFACE ALPHA
 			if (number == 1) {
 				moonSurface.setOpacity(p5.map(value, 0, 127, 0, 1));
-				p5.println("-|| Moon Surface Opacity = " + moonSurface.alphaMultiplier);
+				p5.println("-|| SPACE CREATURE : Moon Surface Opacity = " + moonSurface.alphaMultiplier);
 			}
 		}
 	}

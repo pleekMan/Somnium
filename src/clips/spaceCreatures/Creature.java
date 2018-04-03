@@ -2,6 +2,7 @@ package clips.spaceCreatures;
 
 import processing.core.PGraphics;
 import processing.core.PVector;
+import tools.Tools;
 import globals.Main;
 import globals.PAppletSingleton;
 
@@ -10,6 +11,9 @@ public class Creature {
 	Main p5;
 
 	PVector position;
+	PVector position2;
+	float positionTransition = 0;
+	float positionTransitionDir = -1;
 	PVector velocity;
 	PVector rotation;
 
@@ -83,6 +87,9 @@ public class Creature {
 			}
 			head.setOpacity(opacityMultiplier);
 		}
+		
+		positionTransition += (0.01f) * positionTransitionDir;
+		positionTransition = p5.constrain(positionTransition, 0, 1);
 	}
 
 	public void render() {
@@ -109,8 +116,11 @@ public class Creature {
 		float ySwim = p5.map(p5.cos((radiusOsc * swimMultiplier) * 0.2f), -1, 1, -100, 100) * 1.3f;
 		//float zSwim = xSwim * ySwim * 0.2;
 		float zSwim = p5.sin(waveOscX * 0.2f) * 200;
-
-		drawLayer.translate(position.x + xSwim, position.y + ySwim, position.z + zSwim);
+		
+		PVector finalPosition = Tools.lerpPVector(position, position2, positionTransition);
+		
+		drawLayer.translate(finalPosition.x + xSwim, finalPosition.y + ySwim, finalPosition.z + zSwim);
+		//drawLayer.translate(position.x + xSwim, position.y + ySwim, position.z + zSwim);
 
 		// HEAD
 		head.setPosition(new PVector());
@@ -197,6 +207,19 @@ public class Creature {
 
 	public void setPosition(PVector pos) {
 		position.set(pos);
+		position2 = new PVector(pos.x + p5.random(-200,200),pos.y + p5.random(-2000, 0),pos.z + p5.random(-200,2000));
+	}
+	
+	public void setPositionTransition(float amount){
+		positionTransition = amount;
+	}
+	
+	public void triggerPositionTransition(){
+		if(positionTransition < 0.1f){
+			positionTransitionDir = 1;
+		} else {
+			positionTransitionDir = -1;
+		}
 	}
 
 	public void setOscillation(float seed, float oscVelocity) {
