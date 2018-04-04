@@ -29,7 +29,7 @@ public class SphereHarmony extends Clip {
 	int funcionTrigUsada;
 	float brillo;
 	float pointSize = 1;
-	
+
 	float circulosJump = 0;
 
 	public SphereHarmony(String rendererType) {
@@ -83,7 +83,7 @@ public class SphereHarmony extends Clip {
 
 	@Override
 	public void render() {
-		
+
 		drawLayer.beginDraw();
 		//background(0);
 		drawLayer.fill(0, 5);
@@ -96,13 +96,12 @@ public class SphereHarmony extends Clip {
 		//displaceRotation();
 		circulosJump = audioTrigger ? p5.frameCount % 4 : 1;
 
-		
 		calcularPosiciones();
 		//dibujarCirculo();
 
 		drawLayer.endDraw();
 
-		p5.image(drawLayer, 0,0);
+		p5.image(drawLayer, 0, 0);
 
 	}
 
@@ -112,12 +111,12 @@ public class SphereHarmony extends Clip {
 
 		//fill(brillo, 127);
 		float rotationUnit = p5.TWO_PI / centroX.length;
-		
+
 		for (int j = 0; j < centroX.length; j++) {
 
 			float currentRotation = (rotationUnit * j) + rotacion4Circulos;
-			centroX[j] = (drawLayer.width * 0.5f) + ((radio4Circulos*circulosJump) * p5.cos(currentRotation));
-			centroY[j] = (drawLayer.height * 0.5f) + ((radio4Circulos*circulosJump) * p5.sin(currentRotation));
+			centroX[j] = (drawLayer.width * 0.5f) + ((radio4Circulos * circulosJump) * p5.cos(currentRotation));
+			centroY[j] = (drawLayer.height * 0.5f) + ((radio4Circulos * circulosJump) * p5.sin(currentRotation));
 
 			//toTint(j);
 
@@ -135,7 +134,7 @@ public class SphereHarmony extends Clip {
 				float r = p5.abs(p5.sin(i * 0.01f)) * 255;
 				float g = 0;//abs(cos(i * 0.03)) * (j*50);
 				float b = p5.abs(p5.sin(i * 0.02f)) * 255;
-				drawLayer.fill(r, g, b);
+				drawLayer.fill(r, g, b, brillo);
 				drawLayer.ellipse(vertXPos[j][i], vertYPos[j][i], pointSize, pointSize);
 
 				oscTiempo[j][i] += (anguloVel * (i / (float) cantidadDeVertices));
@@ -190,77 +189,77 @@ public class SphereHarmony extends Clip {
 	public void recieveControllerChange(int channel, int number, int value) {
 		if (channel == 0) {
 
-		    // OSCILATION DISPLACEMENT (POSITION)
-		    if (number == 0) {
-		      for (int i=0; i< oscTiempo[0].length; i++) {
-		        oscilationControl = p5.map(value, 0, 127, 0, p5.TWO_PI);
-		        //THIS IS NOT WORKING
-		        oscTiempo[0][i] = oscilationControl * i;
-		        oscTiempo[1][i] = oscilationControl * i;
-		        oscTiempo[2][i] = oscilationControl * i;
-		        oscTiempo[3][i] = oscilationControl * i;
-		      }
-		    }
+			// OSCILATION DISPLACEMENT (POSITION)
+			if (number == 0) {
+				for (int i = 0; i < oscTiempo[0].length; i++) {
+					oscilationControl = p5.map(value, 0, 127, 0, p5.TWO_PI);
+					//THIS IS NOT WORKING
+					oscTiempo[0][i] = oscilationControl * i;
+					oscTiempo[1][i] = oscilationControl * i;
+					oscTiempo[2][i] = oscilationControl * i;
+					oscTiempo[3][i] = oscilationControl * i;
+				}
+			}
 
-		    if (number == 1) {
-		      brillo= p5.map(value, 0, 127, 0, 255);
-		    }
+			if (number == 1) {
+				brillo = p5.map(value, 0, 127, 0, 255);
+			}
 
-		    // SELECT TRIG FUNCTION
-		    switch(number) {
-		    case 2:
-		      funcionTrigUsada = 0;
-		      break;
-		    case 3:
-		      funcionTrigUsada = 1;
-		      break;
-		    case 4:
-		      funcionTrigUsada = 2;
-		      break;
-		    default:
-		      break;
-		    }
-		  }
+			// SELECT TRIG FUNCTION
+			switch (number) {
+			case 2:
+				funcionTrigUsada = 0;
+				break;
+			case 3:
+				funcionTrigUsada = 1;
+				break;
+			case 4:
+				funcionTrigUsada = 2;
+				break;
+			default:
+				break;
+			}
+		}
 
+		if (channel == 1) {
+			// OSCILATION DISPLACEMENT (VELOCITY FORWARD)
+			if (number == 0) {
+				for (int i = 0; i < oscTiempo.length; i++) {
+					anguloVel = p5.map(value, 0, 127, 0, 0.2f);
+				}
+			}
 
-		  if (channel == 1) {
-		    // OSCILATION DISPLACEMENT (VELOCITY FORWARD)
-		    if (number == 0) {
-		      for (int i=0; i< oscTiempo.length; i++) {
-		        anguloVel = p5.map(value, 0, 127, 0, 0.2f);
-		      }
-		    }
+			if (number == 1) {
+				pointSize = p5.map(value, 0, 127, 1, 200);
+			}
+		}
 
-		    if (number == 1) {
-		      pointSize = p5.map(value, 0, 127, 1, 200);
-		    }
-		  }
+		if (channel == 2) {
+			// 4 CIRCLES CENTER OFFSET
+			if (number == 0) {
+				radio4Circulos = p5.map(value, 0, 127, 0, drawLayer.height * 0.5f);
+			}
+			// INNER RADIUS
+			if (number == 1) {
+				radioInterno = p5.map(value, 0, 127, 0, drawLayer.height);
+			}
+		}
 
-		  if (channel == 2) {
-		    // INNER RADIUS
-		    if (number == 1) {
-		      radioInterno = p5.map(value, 0, 127, 0, drawLayer.height);
-		    }
-		  }
+		if (channel == 3) {
 
-		  if (channel == 3) {
-		    // INNER RADIUS
-		    if (number == 1) {
-		      radio = p5.map(value, 0, 127, 0, drawLayer.height);
-		    }
-		  }
-		  
-		  if (channel == 4) {
-			    // 4 CIRCLES CENTER OFFSET
-			    if (number == 0) {
-			    	radio4Circulos = p5.map(value, 0, 127, 0, drawLayer.height * 0.5f);
-			    }
-			    
-			    if (number == 1) {
-			    	// 4 CIRCLES ROTATION VELOCITY
-			    	rotacion4CirculosIncr = p5.map(value, 0, 127, 0, 1.0f);
-			    }
-			  }
+			// OUTER RADIUS
+			if (number == 1) {
+				radio = p5.map(value, 0, 127, 0, drawLayer.height);
+			}
+		}
+
+		if (channel == 4) {
+
+			if (number == 1) {
+				// 4 CIRCLES ROTATION VELOCITY
+				rotacion4CirculosIncr = p5.map(value, 0, 127, 0, 1.0f);
+			}
+		}
 
 	}
 
