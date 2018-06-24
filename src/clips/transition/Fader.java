@@ -20,6 +20,7 @@ public class Fader {
 		color = p5.color(0);
 		goingUp = true;
 		controlledWithController = false;
+		opacity = 0;
 	}
 
 	public void update() {

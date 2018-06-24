@@ -55,6 +55,14 @@ public class Tools {
 		p5.text("X: " + p5.mouseX + " / Y: " + p5.mouseY, p5.mouseX, p5.mouseY);
 	}
 	
+	static public void drawBackLines() {
+		p5.stroke(200);
+		float offset = p5.frameCount % 40;
+		for (int i = 0; i < p5.width; i += 40) {
+			p5.line(i + offset, 0, i + offset, p5.height);
+		}
+	}
+	
 	public static void translate(PVector p){
 		p5.translate(p.x, p.y, p.z);
 	}

@@ -16,9 +16,9 @@ public class Main extends PApplet {
 	// GUI - END -------------------
 	
 	public void settings(){
-		//size(960, 540, P2D);
+		size(800,800, P2D);
 		//size(600,600, P2D);
-		fullScreen(P2D,1);
+		//fullScreen(P2D,1);
 
 	}
 
@@ -41,7 +41,7 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		surface.setTitle(Integer.toString(((int) frameRate)) + " fps");
+		//surface.setTitle(Integer.toString(((int) frameRate)) + " fps");
 		background(0);
 		//background(25, 25, 50);
 		//drawBackLines();
@@ -51,29 +51,14 @@ public class Main extends PApplet {
 		// lights.drawCalibration();
 	}
 
-	private void drawBackLines() {
-		stroke(200);
-		float offset = frameCount % 40;
-		for (int i = 0; i < width; i += 40) {
-			line(i + offset, 0, i + offset, height);
-		}
 
-		// MOUSE POSITION
-		fill(255, 0, 0);
-		text("FR: " + frameRate, 20, 20);
-		text("X: " + mouseX + " / Y: " + mouseY, mouseX, mouseY);
-
-	}
 
 	public void keyPressed() {
 
 		clipManager.onKeyPressed(key);
 
 		if (key == 'e') {
-
-			clipManager.toggleEditMode();
-
-
+			clipManager.toggleEditMode(); 
 		}
 
 		if (key == CODED) {

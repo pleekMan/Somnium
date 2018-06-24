@@ -47,6 +47,7 @@ public class ClipManager {
 		clips.add(sphereHarmony);
 		System.out.println("-|| Loaded :> " + sphereHarmony.getName());
 		
+		/*
 		PlatonicSolids platonicSolids = new PlatonicSolids(p5.P3D);
 		platonicSolids.load();
 		platonicSolids.setName("PLATONIC SOLIDS");
@@ -70,6 +71,7 @@ public class ClipManager {
 		spaceCreatures.setName("SPACE CREATURES");
 		clips.add(spaceCreatures);
 		System.out.println("-|| Loaded :> " + spaceCreatures.getName());
+		*/
 
 		
 	}
@@ -176,6 +178,7 @@ public class ClipManager {
 			getSelectedClip().onKeyPressed(key);
 
 		// SELECT AND LOAD CLIPS
+		/*
 		switch (key) {
 
 		case '1':
@@ -217,6 +220,7 @@ public class ClipManager {
 			// System.out.println("No Clip Found at: " + selectedClip);
 			break;
 		}
+		*/
 
 		// START SELECTED CLIP
 		if (key == 'a') {
