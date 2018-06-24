@@ -1,9 +1,8 @@
+package lights;
+
 import globals.Main;
 import globals.PAppletSingleton;
-
 import java.util.ArrayList;
-
-import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.serial.*;
 
@@ -13,25 +12,15 @@ public class PixelPicker {
 	Serial serialPort;
 
 	ArrayList<Picker> pickers;
-	PImage samplingSurface;
+	static public PImage samplingSurface;
 	//float surfaceWidth, surfaceHeight;
 
 	int waitFramesToStart = 120;
 	boolean enableSendOut;
-	
+
 	boolean calibrateMode = false;
 
-	public PixelPicker(int _pickerCount, int _surfaceWidth, int _surfaceHeight) {
-		p5 = getP5();
-
-		pickers = new ArrayList<Picker>();
-		//samplingSurface = createGraphics(_surfaceWidth, _surfaceHeight, P2D);
-
-		setupPickers(_pickerCount);
-		resetSender();
-	}
-
-	public PixelPicker(int _surfaceWidth, int _surfaceHeight) {
+	public PixelPicker() {
 		p5 = getP5();
 
 		pickers = new ArrayList<Picker>();
@@ -71,6 +60,19 @@ public class PixelPicker {
 		}
 	}
 
+	public void update() {
+
+		if (samplingSurface != null) {
+
+			pick();
+
+			if (calibrateMode) {
+				drawPickers();
+			}
+		}
+		
+	}
+
 	public void savePickersToFile(String _fileName) {
 		String allPickersData = "";
 
@@ -86,6 +88,7 @@ public class PixelPicker {
 		samplingSurface.loadPixels();
 		for (int i = 0; i < pickers.size(); i++) {
 			Picker p = pickers.get(i);
+			
 			p.setColor(getColorAt(p.getX(), p.getY()));
 		}
 
@@ -94,12 +97,20 @@ public class PixelPicker {
 
 	public int getColorAt(float x, float y) {
 		//println("DS.width -> " + drawSurface.width);
-		int pixelSlot = (int) ((x * samplingSurface.width) + (samplingSurface.width * (y * samplingSurface.height)));
+		int pixelSlot = ((int)(x * samplingSurface.width) + (samplingSurface.width * (int)(y * samplingSurface.height)));
 		return samplingSurface.pixels[pixelSlot];
 	}
 
 	public Picker getPicker(int pickerNum) {
 		return pickers.get(pickerNum);
+	}
+
+	public void toggleCalibrationMode() {
+		calibrateMode = !calibrateMode;
+	}
+
+	public boolean isCalibrating() {
+		return calibrateMode;
 	}
 
 	public void addPicker(float _x, float _y) {
@@ -131,7 +142,7 @@ public class PixelPicker {
 			}
 		}
 	}
-	
+
 	//TODO CHANGE THIS MAPPING ON THE ARDUINO CODE
 	public byte mapByteToRange(int value) {
 		// SYSTEM TO ONLY USE VALUES FROM 0 -> 200, AND THEN LEAVE OTHER VALUES AS CONTROL CODES
@@ -146,8 +157,8 @@ public class PixelPicker {
 			p5.text(i, (pickers.get(i).getX() * samplingSurface.width) + 10, (pickers.get(i).getY() * samplingSurface.height));
 
 			p5.fill(pickers.get(i).getColor());
-			//stroke(255);
-			p5.noStroke();
+			p5.stroke(30);
+			//p5.noStroke();
 			p5.ellipse(pickers.get(i).getX() * samplingSurface.width, pickers.get(i).getY() * samplingSurface.height, 10, 10);
 		}
 	}
@@ -155,10 +166,11 @@ public class PixelPicker {
 	public void renderDrawSurface() {
 		p5.image(samplingSurface, 0, 0);
 	}
-	
-	public void setSamplingSurface(PImage surface){
+
+	static public void setSamplingSurface(PImage surface) {
 		samplingSurface = surface;
 	}
+
 	public PImage getSamplingSurface() {
 		return samplingSurface;
 	}
@@ -194,4 +206,5 @@ public class PixelPicker {
 	protected Main getP5() {
 		return PAppletSingleton.getInstance().getP5Applet();
 	}
+
 }

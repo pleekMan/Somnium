@@ -1,5 +1,6 @@
 package globals;
 
+import lights.PixelPicker;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -37,13 +38,17 @@ public class Clip {
 		}
 
 	}
+	
 
 	public void start() {
 		isPlaying = true;
+		PixelPicker.setSamplingSurface(drawLayer);
+		p5.println("-|| STARTING: " + name);
 	}
 
 	public void stop() {
 		isPlaying = false;
+		p5.println("-|| STOPPING: " + name);
 	}
 
 	public boolean isPlaying() {

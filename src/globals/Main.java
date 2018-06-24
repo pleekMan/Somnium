@@ -1,14 +1,15 @@
 package globals;
 
-
 import controls.MidiController;
 import processing.core.PApplet;
-
+import lights.PixelPicker;
 
 public class Main extends PApplet {
 
 	ClipManager clipManager;
-	MidiController midiController;
+	PixelPicker pixelPicker;
+	//MidiController midiController;
+	
 	// GUI - BEGIN -----------------
 
 	//ControlP5 cp5;
@@ -19,7 +20,6 @@ public class Main extends PApplet {
 		size(800,800, P2D);
 		//size(600,600, P2D);
 		//fullScreen(P2D,1);
-
 	}
 
 	public void setup() {
@@ -32,9 +32,11 @@ public class Main extends PApplet {
 		imageMode(CENTER);
 
 		clipManager = new ClipManager();
+		pixelPicker = new PixelPicker();
+		pixelPicker.setupPickersFromFile("rockyData.csv");
 		
-		midiController = new MidiController();
-		midiController.setClipManagerReference(clipManager);
+		//midiController = new MidiController();
+		//midiController.setClipManagerReference(clipManager);
 
 		//createControllers();
 
@@ -48,8 +50,11 @@ public class Main extends PApplet {
 
 		clipManager.update();
 		clipManager.render();
-		// lights.drawCalibration();
-	}
+		
+		pixelPicker.update();
+		
+
+}
 
 
 
@@ -59,6 +64,10 @@ public class Main extends PApplet {
 
 		if (key == 'e') {
 			clipManager.toggleEditMode(); 
+		}
+		
+		if (key == 'l') {
+			pixelPicker.toggleCalibrationMode(); 
 		}
 
 		if (key == CODED) {

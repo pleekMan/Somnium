@@ -15,7 +15,7 @@ public class SphereHarmony extends Clip {
 
 	float[] centroX;
 	float[] centroY;
-	float radio = 200;
+	float radio = 500;
 	float radioInterno;
 	float radio4Circulos = 0;
 	float rotacion4Circulos = 0;

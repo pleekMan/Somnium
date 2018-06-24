@@ -1,12 +1,14 @@
 package globals;
 
 import java.util.ArrayList;
+
 import controls.AudioController;
 import clips.SphereHarmony;
 import clips.lunarDrone.LunarDrone;
 import clips.moonEclipse.MoonEclipse;
 import clips.platonicSolids.PlatonicSolids;
 import clips.spaceCreatures.SpaceCreature;
+import clips.test.TestClip;
 import clips.transition.Fader;
 
 public class ClipManager {
@@ -47,13 +49,20 @@ public class ClipManager {
 		clips.add(sphereHarmony);
 		System.out.println("-|| Loaded :> " + sphereHarmony.getName());
 		
+		TestClip testClip = new TestClip(p5.P2D);
+		testClip.load();
+		testClip.setName("TEST CLIP");
+		clips.add(testClip);
+		System.out.println("-|| Loaded :> " + testClip.getName());
+
 		/*
 		PlatonicSolids platonicSolids = new PlatonicSolids(p5.P3D);
 		platonicSolids.load();
 		platonicSolids.setName("PLATONIC SOLIDS");
 		clips.add(platonicSolids);
 		System.out.println("-|| Loaded :> " + platonicSolids.getName());
-
+		
+		
 		MoonEclipse moonEclipse = new MoonEclipse(p5.P2D);
 		moonEclipse.load();
 		moonEclipse.setName("MOON ECLIPSE");
@@ -77,7 +86,9 @@ public class ClipManager {
 	}
 
 	public void update() {
+		
 		audioIn.update();
+		
 		if (clips.get(selectedClip) != null) {
 			clips.get(selectedClip).setAudioTrigger(audioIn.isAboveThreshold());
 
