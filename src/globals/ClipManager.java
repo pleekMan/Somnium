@@ -39,7 +39,7 @@ public class ClipManager {
 		clips = new ArrayList<Clip>();
 		selectedClip = playingClip = 0;
 		
-		guiControllers = new GuiControllers();
+		guiControllers = new GuiControllers(this);
 
 		clipViewPosition = new PVector(0,0);
 
