@@ -101,7 +101,9 @@ public class SphereHarmony extends Clip {
 
 		drawLayer.endDraw();
 
-		p5.image(drawLayer, 0, 0);
+		// DRAW LAYER IS DRAWN ON SUPERCLASS
+		//p5.image(drawLayer, viewPosition.x, viewPosition.y);
+		super.render();
 
 	}
 

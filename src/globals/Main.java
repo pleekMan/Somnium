@@ -1,13 +1,16 @@
 package globals;
 
-import controls.MidiController;
+//import controls.MidiController;
 import processing.core.PApplet;
 import lights.PixelPicker;
+import controlP5.ControlEvent;
+import controls.ComputerVisionManager;
 
 public class Main extends PApplet {
 
 	ClipManager clipManager;
 	PixelPicker pixelPicker;
+	//ComputerVisionManager cvManager;
 	//MidiController midiController;
 	
 	// GUI - BEGIN -----------------
@@ -17,7 +20,7 @@ public class Main extends PApplet {
 	// GUI - END -------------------
 	
 	public void settings(){
-		size(800,800, P2D);
+		size(1200,800, P2D);
 		//size(600,600, P2D);
 		//fullScreen(P2D,1);
 	}
@@ -30,7 +33,8 @@ public class Main extends PApplet {
 
 		textureMode(NORMAL);
 		imageMode(CENTER);
-
+		
+		//cvManager = new ComputerVisionManager();
 		clipManager = new ClipManager();
 		pixelPicker = new PixelPicker();
 		pixelPicker.setupPickersFromFile("rockyData.csv");
@@ -47,7 +51,13 @@ public class Main extends PApplet {
 		background(0);
 		//background(25, 25, 50);
 		//drawBackLines();
-
+		
+		/*
+		if (cvManager.detectsSomething()) {
+			cvManager.getAllCentroids();
+		}
+		*/
+		
 		clipManager.update();
 		clipManager.render();
 		
@@ -94,66 +104,19 @@ public class Main extends PApplet {
 		// ship.onMouseMoved();
 	}
 
-	// GUI - BEGIN
-	// -------------------------------------------------------------------------
-	/*
-	private void createControllers() {
 
-		cp5 = new ControlP5(this);
-
-		// CLIP MANAGER
-		// cp5.addButton("Use_Projection_For_Lights").setPosition(20,
-		// 100).setSize(150, 30);
-		// cp5.addButton("Previous_Clip").setCaptionLabel("<< (Q)").setPosition(20,
-		// 100).setSize(30, 30).setColor(new CColor(color(0, 200, 200), color(0,
-		// 150, 150), color(0, 200, 200), color(255), color(255)));
-		// cp5.addButton("Next_Clip").setCaptionLabel(">> (W)").setPosition(60,
-		// 100).setSize(30, 30).setColor(new CColor(color(0, 200, 200), color(0,
-		// 150, 150), color(0, 200, 200), color(255), color(255)));
-		cp5.addToggle("Use_Projection_For_Lights").setPosition(20, 250).setSize(120, 30).setCaptionLabel("USE PROJECTION FOR LIGHTS").setValue(false).setColorBackground(color(255, 255, 0)).setColorForeground(color(200, 200, 0));// .setColor(new
-																																																									// CColor(color(0,
-																																																									// 200,
-																																																									// 200),
-																																																									// color(0,
-																																																									// 150,
-																																																									// 150),
-																																																									// color(0,
-																																																									// 200,
-																																																									// 200),
-																																																									// color(255),
-																																																									// color(255)));
-
-		// LIGHT CALIBRATION
-		cp5.addSlider("Ring_Count").setPosition(20, 570).setSize(150, 20).setRange(2, 20).setNumberOfTickMarks(19).setValue(15).snapToTickMarks(true).showTickMarks(true);
-		cp5.addSlider("Ray_Count").setPosition(20, 610).setSize(150, 20).setRange(3, 16).setNumberOfTickMarks(14).setValue(8).snapToTickMarks(true).showTickMarks(true);
-		cp5.addSlider("Picker_Offset").setPosition(20, 650).setSize(150, 20).setRange(-100, 100).setValue(0).setNumberOfTickMarks(3).snapToTickMarks(false).showTickMarks(true);
-		cp5.addButton("Reset_Lights").setPosition(20, 690).setSize(70, 30).setColor(new CColor(color(0, 200, 200), color(0, 150, 150), color(0, 200, 200), color(255), color(255)));
-		cp5.addButton("Load_Lights").setPosition(20, 520).setSize(50, 30).setCaptionLabel("LOAD").setColor(new CColor(color(0, 200, 200), color(0, 150, 150), color(0, 200, 200), color(255), color(255)));
-		cp5.addButton("Save_Lights").setPosition(80, 520).setSize(50, 30).setCaptionLabel("SAVE").setColor(new CColor(color(0, 200, 200), color(0, 150, 150), color(0, 200, 200), color(255), color(255)));
-
-		cp5.hide();
-
-	}
-	*/
+	// *******************************************
+	// *******************************************
 	
-	// CLIP MANAGER
+	public void controlEvent(ControlEvent event){
+	    // THIS IS FORWARDED TO GuiControllers
+		clipManager.guiControllers.controlEvent(event);
+	}
 
-	/*
-	 * public void Previous_Clip() { clipManager.goToPreviousClip(); Toggle
-	 * toggle = (Toggle) cp5.getController("Use_Projection_For_Lights");
-	 * toggle.setState(clipManager.getPlayingClip().useProjectionForLights); }
-	 * public void Next_Clip() { clipManager.goToNextClip(); }
-	 */
-
-	// LIGHT CALIBRATION
-
-
-	// GUI - END
-	// ---------------------------------------------------------------------------
 
 	// *******************************************
 	// *******************************************
-
+	
 	public static void main(String args[]) {
 		/*
 		 * if (args.length > 0) { String memorySize = args[0]; }

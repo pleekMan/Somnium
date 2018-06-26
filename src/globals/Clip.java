@@ -13,6 +13,7 @@ public class Clip {
 
 	protected PGraphics drawLayer;
 	private String rendererType;
+	public PVector viewPosition;
 	
 	protected boolean[] triggers;
 	
@@ -28,10 +29,10 @@ public class Clip {
 
 		name = "??";
 
-		PVector layerBoxSize = new PVector(p5.width,p5.height); // RESOLUCION Q SE LA BANCA
-		
+		PVector layerBoxSize = new PVector(600,600); // RESOLUCION Q SE LA BANCA
 		drawLayer = p5.createGraphics((int)layerBoxSize.x, (int)layerBoxSize.y, rendererType); // SI PONGO P2D, EL FRAMERATE DROPPEA MAAAAALL..!!
-
+		//viewPosition = new PVector();
+		
 		triggers = new boolean[5];
 		for (int i = 0; i < triggers.length; i++) {
 			triggers[i] = false;
@@ -72,6 +73,13 @@ public class Clip {
 	public String getName() {
 		return name;
 	}
+	
+	public void setViewPositioner(PVector positionObject){
+		viewPosition = positionObject;
+	}
+	public PVector getViewPosition(){
+		return viewPosition;
+	}
 
 
 	public void update() {
@@ -79,6 +87,7 @@ public class Clip {
 
 
 	public void render() {
+		p5.image(drawLayer, viewPosition.x, viewPosition.y);
 	}
 
 

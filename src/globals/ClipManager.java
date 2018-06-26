@@ -2,7 +2,9 @@ package globals;
 
 import java.util.ArrayList;
 
+import processing.core.PVector;
 import controls.AudioController;
+import controls.GuiControllers;
 import clips.SphereHarmony;
 import clips.lunarDrone.LunarDrone;
 import clips.moonEclipse.MoonEclipse;
@@ -17,41 +19,53 @@ public class ClipManager {
 	ArrayList<Clip> clips;
 	public int selectedClip;
 	public int playingClip;
+	
+	// GLOBAL POSITION OF CLIPS. FOR NOW LET'S KEEP IT SIMPLE: ALWAYS ANCHORED TO 0,0.
+	// SO AS NOT TO HAVE TO MODIFY PixelPicker SAMPLING, AND KEEP MOUSE POS MAPPINGS
+	PVector clipViewPosition;
 
 	boolean editMode;
 
 	//PImage mask;
 
 	Fader fader;
-	AudioController audioIn;
+	//AudioController audioIn;
+	
+	GuiControllers guiControllers;
 
 	public ClipManager() {
 		p5 = getP5();
-
+		
 		clips = new ArrayList<Clip>();
-
 		selectedClip = playingClip = 0;
+		
+		guiControllers = new GuiControllers();
+
+		clipViewPosition = new PVector(0,0);
 
 		editMode = false;
 
 		//mask = p5.loadImage("OctagonaMask.png");
 
 		fader = new Fader();
-		audioIn = new AudioController();
+		//audioIn = new AudioController();
 		
 		loadClipSequence();
+		
 	}
 
 	private void loadClipSequence() {
 		SphereHarmony sphereHarmony = new SphereHarmony(p5.JAVA2D);
 		sphereHarmony.load();
 		sphereHarmony.setName("SPHERE HARMONY");
+		sphereHarmony.setViewPositioner(clipViewPosition);
 		clips.add(sphereHarmony);
 		System.out.println("-|| Loaded :> " + sphereHarmony.getName());
 		
 		TestClip testClip = new TestClip(p5.P2D);
 		testClip.load();
 		testClip.setName("TEST CLIP");
+		testClip.setViewPositioner(clipViewPosition);
 		clips.add(testClip);
 		System.out.println("-|| Loaded :> " + testClip.getName());
 
@@ -82,17 +96,22 @@ public class ClipManager {
 		System.out.println("-|| Loaded :> " + spaceCreatures.getName());
 		*/
 
-		
+		for (int i = 0; i < clips.size(); i++) {
+			guiControllers.addClipItem(clips.get(i).getName());
+		}
 	}
 
 	public void update() {
 		
-		audioIn.update();
+		//audioIn.update();
 		
+		/*
 		if (clips.get(selectedClip) != null) {
 			clips.get(selectedClip).setAudioTrigger(audioIn.isAboveThreshold());
 
 		}
+		*/
+		
 		for (Clip clip : clips) {
 			if (clip.isPlaying()) {
 				clip.update();
@@ -113,7 +132,6 @@ public class ClipManager {
 
 		fader.render();
 		
-
 
 		// EDIT MODE DISPLAY -------------------------------
 
@@ -136,7 +154,9 @@ public class ClipManager {
 			drawClipNavigator();
 			
 			// RENDER AUDIO VUMETERS
-			audioIn.render();
+			//audioIn.render();
+			
+			guiControllers.render();
 
 		}
 
@@ -254,7 +274,8 @@ public class ClipManager {
 
 		// TRIGGERS
 		if (key == 'z') {
-			clips.get(playingClip).trigger(0);
+			//clips.get(playingClip).trigger(0);
+			//clipViewPosition.set(p5.mouseX, p5.mouseY);
 		}
 		if (key == 'x') {
 			clips.get(playingClip).trigger(1);
@@ -281,6 +302,12 @@ public class ClipManager {
 
 			getSelectedClip().start();
 			playingClip = selectedClip;
+			
+			guiControllers.setPlayingClip(getPlayingClip().getName());
+			
+			// This works cuz ClipViewPOsition PVector in ClipManager and Clip are the same (linked on load)
+			// LET'S KEEP IT SIMPLE: ALWAYS ANCHORED TO 0,0.
+			clipViewPosition.set(0, 0);
 			
 			p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
 			p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
@@ -336,10 +363,10 @@ public class ClipManager {
 		// AUDIO CONTROL
 		if(channel == 6){
 			if(number == 0){
-				audioIn.setAmpMultiplier(p5.map(value, 0, 127, 0.2f, 4));
+				//audioIn.setAmpMultiplier(p5.map(value, 0, 127, 0.2f, 4));
 			}
 			if(number == 1){
-				audioIn.setThreshold(p5.norm(value, 0, 127));
+				//audioIn.setThreshold(p5.norm(value, 0, 127));
 			}
 		}
 		
