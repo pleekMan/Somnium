@@ -292,7 +292,7 @@ public class ClipManager {
 
 	}
 
-	private void triggerClip(int selectedClip) {
+	public void triggerClip(int selectedClip) {
 
 		if (selectedClip < clips.size()) {
 
@@ -318,7 +318,7 @@ public class ClipManager {
 		}
 	}
 	
-	private void stopClip(){
+	public void stopClip(){
 		getSelectedClip().stop();
 	}
 

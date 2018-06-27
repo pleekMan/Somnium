@@ -13,6 +13,10 @@ public class GuiControllers {
 	PVector position;
 	
 	ScrollableList clipSelector;
+	Button buttonPlay;
+	Button buttonStop;
+	Button buttonNext;
+	Button buttonPrevious;
 
 	public GuiControllers(ClipManager cm) {
 		p5 = getP5();
@@ -32,7 +36,8 @@ public class GuiControllers {
 	}
 
 	private void createControllers() {
-
+		
+		// CLIP SELECTOR DROPDOWN
 		clipSelector = controllers.addScrollableList("clipSelector")
 		.setLabel("   - CLIPS -")
 		.setPosition(position.x + 10, position.y + 20)
@@ -41,9 +46,37 @@ public class GuiControllers {
 		.setItemHeight(20)
 		.setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
 		.setColorActive(p5.color(255,0,0))
-
 		;
 		
+		// TRIGGER / PAUSE / NEXT / PREVIOUS BUTTONS
+		
+		buttonPlay = controllers.addButton("buttonPlay")
+		.setLabel(">")
+		//.setValue(0)
+		.setPosition(position.x + 220,position.y + 20)
+		.setSize(30,20);
+		;
+		
+		buttonStop = controllers.addButton("buttonStop")
+		.setLabel("||")
+		//.setValue(0)
+		.setPosition(position.x + 260,position.y + 20)
+		.setSize(30,20);
+		;
+		
+		buttonNext = controllers.addButton("buttonNext")
+		.setLabel(">>")
+		//.setValue(0)
+		.setPosition(position.x + 260,position.y + 60)
+		.setSize(30,20);
+		;
+		
+		buttonPrevious = controllers.addButton("buttonPrevious")
+		.setLabel("<<")
+		//.setValue(0)
+		.setPosition(position.x + 220,position.y + 60)
+		.setSize(30,20);
+		;
 
 	}
 	
@@ -59,8 +92,23 @@ public class GuiControllers {
 	    // ControlEvent FORWARDED FROM PApplet Main (SINCE ControlP5 REGISTERS THERE)
 		p5.println("-|| ControlEvent: " + event.getName() + " = " + event.getValue());
 		
+		// CLIP SELECTOR
 		if (event.isFrom("clipSelector")) {
 			clipManager.selectedClip = (int)event.getValue();
+		}
+		
+		// TRIGGER / PAUSE / NEXT / PREVIOUS BUTTONS
+		if (event.isFrom("buttonPlay")) {
+			clipManager.triggerClip(clipManager.selectedClip);
+		}
+		if (event.isFrom("buttonStop")) {
+			clipManager.stopClip();
+		}
+		if (event.isFrom("buttonNext")) {
+			clipManager.goToNextClip();
+		}
+		if (event.isFrom("buttonPrevious")) {
+			clipManager.goToPreviousClip();
 		}
 	}
 	
@@ -78,6 +126,26 @@ public class GuiControllers {
 		}
 		
 		//controllers.update();
+	}
+	
+	public void colorSelector(){
+		
+		String playingClipName = clipManager.getPlayingClip().getName();
+		String selectedClipName = clipManager.getSelectedClip().getName();
+		
+		for (int i = 0; i < clipSelector.getItems().size(); i++) {
+			CColor backColor = new CColor();
+			if (clipSelector.getItem(i).get("name").toString().equals(playingClipName)) {
+				backColor.setBackground(p5.color(255,0,0));
+				clipSelector.getItem(playingClipName).put("color", backColor);
+			} else if(clipSelector.getItem(i).get("name").toString().equals(selectedClipName)){
+				
+			} else {
+			
+				backColor.setBackground(p5.color(50));
+				clipSelector.getItem(i).put("color", backColor);
+			}
+		}
 	}
 	
 
