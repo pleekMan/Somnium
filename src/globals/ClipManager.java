@@ -2,14 +2,11 @@ package globals;
 
 import java.util.ArrayList;
 
+import lights.PixelPicker;
 import processing.core.PVector;
-import controls.AudioController;
+import tools.TempoManager;
 import controls.GuiControllers;
 import clips.SphereHarmony;
-import clips.lunarDrone.LunarDrone;
-import clips.moonEclipse.MoonEclipse;
-import clips.platonicSolids.PlatonicSolids;
-import clips.spaceCreatures.SpaceCreature;
 import clips.test.TestClip;
 import clips.transition.Fader;
 
@@ -19,49 +16,51 @@ public class ClipManager {
 	ArrayList<Clip> clips;
 	public int selectedClip;
 	public int playingClip;
-	
+	public static PVector canvasSize;
+
 	// GLOBAL POSITION OF CLIPS. FOR NOW LET'S KEEP IT SIMPLE: ALWAYS ANCHORED TO 0,0.
 	// SO AS NOT TO HAVE TO MODIFY PixelPicker SAMPLING, AND KEEP MOUSE POS MAPPINGS
-	PVector clipViewPosition;
+	public static PVector clipViewPosition;
 
 	boolean editMode;
-
-	//PImage mask;
+	public static boolean displayClips = true;
 
 	Fader fader;
 	//AudioController audioIn;
-	
+
 	GuiControllers guiControllers;
+	TempoManager tempoManager;
 
 	public ClipManager() {
 		p5 = getP5();
-		
+
+		canvasSize = new PVector(600, 600);
+
 		clips = new ArrayList<Clip>();
 		selectedClip = playingClip = 0;
-		
-		guiControllers = new GuiControllers(this);
 
-		clipViewPosition = new PVector(0,0);
+		guiControllers = new GuiControllers(this);
+		tempoManager = new TempoManager();
+
+		clipViewPosition = new PVector(0, 0);
 
 		editMode = false;
 
-		//mask = p5.loadImage("OctagonaMask.png");
-
 		fader = new Fader();
 		//audioIn = new AudioController();
-		
+
 		loadClipSequence();
-		
+
 	}
 
 	private void loadClipSequence() {
-		SphereHarmony sphereHarmony = new SphereHarmony(p5.JAVA2D);
+		SphereHarmony sphereHarmony = new SphereHarmony(p5.P2D);
 		sphereHarmony.load();
 		sphereHarmony.setName("SPHERE HARMONY");
 		sphereHarmony.setViewPositioner(clipViewPosition);
 		clips.add(sphereHarmony);
 		System.out.println("-|| Loaded :> " + sphereHarmony.getName());
-		
+
 		TestClip testClip = new TestClip(p5.P2D);
 		testClip.load();
 		testClip.setName("TEST CLIP");
@@ -102,36 +101,54 @@ public class ClipManager {
 	}
 
 	public void update() {
-		
+
 		//audioIn.update();
-		
+
 		/*
 		if (clips.get(selectedClip) != null) {
 			clips.get(selectedClip).setAudioTrigger(audioIn.isAboveThreshold());
 
 		}
 		*/
-		
+
+		// TEMPO
+		tempoManager.update();
+		if (tempoManager.isOnBeat()) {
+			getPlayingClip().beatEvent(tempoManager.getBeatDivision());
+		}
+
+		// CLIPS
+		getPlayingClip().update();
+		getPlayingClip().resetTriggers();
+		/*
 		for (Clip clip : clips) {
 			if (clip.isPlaying()) {
 				clip.update();
 				clip.resetTriggers();
 			}
 		}
+		*/
 	}
 
 	public void render() {
+
+		//CLIPS
+		getPlayingClip().render();
+
+		/*
 		for (Clip clip : clips) {
 			if (clip.isPlaying()) {
 				clip.render();
 			}
 		}
+		*/
 
 		// RENDER MASK
 		//p5.image(mask, LightsManager.center.x, LightsManager.center.y, LightsManager.getBoundingBoxDimension(), LightsManager.getBoundingBoxDimension());
 
 		fader.render();
-		
+
+		tempoManager.render();
 
 		// EDIT MODE DISPLAY -------------------------------
 
@@ -152,10 +169,10 @@ public class ClipManager {
 			p5.text("Playing Clip: " + playingClip + "/" + clips.size(), 20, 60);
 
 			drawClipNavigator();
-			
+
 			// RENDER AUDIO VUMETERS
 			//audioIn.render();
-			
+
 			guiControllers.render();
 
 		}
@@ -201,6 +218,110 @@ public class ClipManager {
 		} else {
 			p5.text("-- NO CLIPS LOADED --", originX, originY);
 		}
+	}
+
+	public void triggerClip(int selectedClip) {
+
+		if (selectedClip < clips.size()) {
+
+			for (Clip clip : clips) {
+				clip.stop();
+			}
+
+			getSelectedClip().start();
+			playingClip = selectedClip;
+
+			PixelPicker.setSamplingSurface(getPlayingClip().getDrawLayer());
+			guiControllers.setPlayingClip(getPlayingClip().getName());
+
+			// This works cuz ClipViewPOsition PVector in ClipManager and Clip are the same (linked on load)
+			// LET'S KEEP IT SIMPLE: ALWAYS ANCHORED TO 0,0.
+			clipViewPosition.set(0, 0);
+
+			//p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+			//p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+			//p5.println("-|| -----");
+
+		} else {
+			System.out.println("No Clip Found at: " + selectedClip);
+		}
+	}
+
+	public void stopClip() {
+		getSelectedClip().stop();
+	}
+
+	public void toggleEditMode() {
+		editMode = !editMode;
+	}
+
+	public Clip getPlayingClip() {
+		return clips.get(playingClip);
+	}
+
+	public Clip getSelectedClip() {
+		return clips.get(selectedClip);
+	}
+
+	public void goToNextClip() {
+		selectedClip++;
+		if (selectedClip > clips.size() - 1) {
+			selectedClip = clips.size() - 1;
+		}
+		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+		p5.println("-|| -----");
+	}
+
+	public void goToPreviousClip() {
+		selectedClip--;
+		if (selectedClip < 0) {
+			selectedClip = 0;
+		}
+		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
+		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
+		p5.println("-|| -----");
+
+	}
+
+	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
+
+	public void recieveControllerChange(int channel, int number, int value) {
+		//p5.println("Controller :: " + channel + " | " + number + " | " + value);
+
+		// AUDIO CONTROL
+		if (channel == 6) {
+			if (number == 0) {
+				//audioIn.setAmpMultiplier(p5.map(value, 0, 127, 0.2f, 4));
+			}
+			if (number == 1) {
+				//audioIn.setThreshold(p5.norm(value, 0, 127));
+			}
+		}
+
+		// CLIP GLOBAL CONTROLS
+		if (channel == 9) {
+			if (number == 10 && value >= 127) {
+				goToPreviousClip();
+			}
+			if (number == 11 && value >= 127) {
+				goToNextClip();
+			}
+			if (number == 12 && value >= 127) {
+				stopClip();
+			}
+			if (number == 13 && value >= 127) {
+				triggerClip(selectedClip);
+			}
+			if (number == 14 && value >= 127) {
+				toggleEditMode();
+			}
+		} else {
+			// CLIP INNER CONTROLS
+			clips.get(selectedClip).recieveControllerChange(channel, number, value);
+			fader.recieveControllerChange(channel, number, value);
+		}
+
 	}
 
 	public void onKeyPressed(char key) {
@@ -272,6 +393,10 @@ public class ClipManager {
 			goToPreviousClip();
 		}
 
+		if (key == 'd') {
+			displayClips = !displayClips;
+		}
+
 		// TRIGGERS
 		if (key == 'z') {
 			//clips.get(playingClip).trigger(0);
@@ -292,107 +417,10 @@ public class ClipManager {
 
 	}
 
-	public void triggerClip(int selectedClip) {
-
-		if (selectedClip < clips.size()) {
-
-			for (Clip clip : clips) {
-				clip.stop();
-			}
-
-			getSelectedClip().start();
-			playingClip = selectedClip;
-			
-			guiControllers.setPlayingClip(getPlayingClip().getName());
-			
-			// This works cuz ClipViewPOsition PVector in ClipManager and Clip are the same (linked on load)
-			// LET'S KEEP IT SIMPLE: ALWAYS ANCHORED TO 0,0.
-			clipViewPosition.set(0, 0);
-			
-			p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
-			p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
-			p5.println("-|| -----");
-
-		} else {
-			System.out.println("No Clip Found at: " + selectedClip);
+	public void onMousePressed(int button) {
+		if (tempoManager.isOverTapMarker(p5.mouseX, p5.mouseY)) {
+			tempoManager.tap();
 		}
-	}
-	
-	public void stopClip(){
-		getSelectedClip().stop();
-	}
-
-	public void toggleEditMode() {
-		editMode = !editMode;
-	}
-
-	public Clip getPlayingClip() {
-		return clips.get(playingClip);
-	}
-
-	public Clip getSelectedClip() {
-		return clips.get(selectedClip);
-	}
-
-	public void goToNextClip() {
-		selectedClip++;
-		if (selectedClip > clips.size() - 1) {
-			selectedClip = clips.size() - 1;
-		}
-		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
-		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
-		p5.println("-|| -----");
-}
-
-	public void goToPreviousClip() {
-		selectedClip--;
-		if (selectedClip < 0) {
-			selectedClip = 0;
-		}
-		p5.println("-|| MANAGER :: Selected Clip ->\t" + selectedClip + " = " + clips.get(selectedClip).getName());
-		p5.println("-|| MANAGER :: Playing Clip ->\t" + playingClip + " = " + clips.get(playingClip).getName());
-		p5.println("-|| -----");
-
-	}
-
-	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
-
-	public void recieveControllerChange(int channel, int number, int value) {
-		//p5.println("Controller :: " + channel + " | " + number + " | " + value);
-		
-		// AUDIO CONTROL
-		if(channel == 6){
-			if(number == 0){
-				//audioIn.setAmpMultiplier(p5.map(value, 0, 127, 0.2f, 4));
-			}
-			if(number == 1){
-				//audioIn.setThreshold(p5.norm(value, 0, 127));
-			}
-		}
-		
-		// CLIP GLOBAL CONTROLS
-		if (channel == 9) {
-			if(number == 10 && value >= 127){
-				goToPreviousClip();
-			}
-			if(number == 11 && value >= 127){
-				goToNextClip();
-			}
-			if(number == 12 && value >= 127){
-				stopClip();
-			}
-			if(number == 13 && value >= 127){
-				triggerClip(selectedClip);
-			}
-			if(number == 14 && value >= 127){
-				toggleEditMode();
-			}
-		} else {
-			// CLIP INNER CONTROLS
-			clips.get(selectedClip).recieveControllerChange(channel, number, value);
-			fader.recieveControllerChange(channel, number, value);
-		}
-
 	}
 
 	public void recieveNoteOn(int channel, int pitch, int velocity) {

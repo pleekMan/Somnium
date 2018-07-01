@@ -6,10 +6,8 @@ import processing.core.PVector;
 
 public class TempoManager {
 
-	HEY;
 	//EVERYTHING WORKS BUT I'M STILL TESTING IN PROCESSING IDE.
-	//SOMETIMES IT SKIPS A BEAT
-	
+
 	Main p5;
 
 	float bpm;
@@ -25,6 +23,7 @@ public class TempoManager {
 	// VIZ
 	PVector beatMarkerPos;
 	float beatMarkerSize;
+	float beatMarkerOpacity = 1;
 
 	public TempoManager() {
 		p5 = getP5();
@@ -35,7 +34,7 @@ public class TempoManager {
 		setBPM(60);
 		onBeat = false;
 
-		beatMarkerPos = new PVector(p5.width * 0.5f, 100);
+		beatMarkerPos = new PVector(1000, 750);
 		beatMarkerSize = 50;
 	}
 
@@ -49,7 +48,7 @@ public class TempoManager {
 			} else {
 				tapDifference = System.currentTimeMillis() - lastTapTime;
 				lastTapTime = System.currentTimeMillis();
-				p5.println("-|| TAP DIFF: " + tapDifference);
+				//p5.println("-|| TAP DIFF: " + tapDifference);
 				setBpmFromMillis((int) tapDifference);
 			}
 
@@ -58,7 +57,7 @@ public class TempoManager {
 		// IF MORE THAN 5 SECONDS WENT BY, EXIT onTapTempoMode
 		if (onTapTempoMode && (System.currentTimeMillis() - lastTapTime) > 5000) {
 			onTapTempoMode = false;
-			p5.println("-|| EXITING TAP TEMPO MODE");
+			//p5.println("-|| EXITING TAP TEMPO MODE");
 		}
 
 		// TAP TEMPO MODE - END
@@ -71,6 +70,8 @@ public class TempoManager {
 		} else {
 			onBeat = false;
 		}
+
+		beatMarkerOpacity -= 0.1;
 	}
 
 	public void render() {
@@ -81,11 +82,19 @@ public class TempoManager {
 
 		p5.noStroke();
 		if (isOnBeat()) {
-			p5.fill(0, 255, 127);
-		} else {
-			p5.noFill();
+			beatMarkerOpacity = 1;
 		}
+
+		p5.fill(0, 255, 127, (beatMarkerOpacity * 255) % 255);
 		p5.ellipse(beatMarkerPos.x, beatMarkerPos.y, beatMarkerSize * 0.8f, beatMarkerSize * 0.8f);
+
+		p5.fill(0, 255, 200);
+		p5.text("BPM :: " + bpm + " / " + beatDivision, 1035, 745);
+		if (onTapTempoMode) {
+			p5.fill(255,0,0);
+			p5.text("|| TAPPING ||", 1035, 765);
+		}
+
 	}
 
 	public void setBPM(int _bpm) {

@@ -14,9 +14,9 @@ public class Clip {
 	protected PGraphics drawLayer;
 	private String rendererType;
 	public PVector viewPosition;
-	
+
 	protected boolean[] triggers;
-	
+
 	protected boolean audioTrigger = false;
 
 	public Clip(String _rendererType) {
@@ -29,21 +29,19 @@ public class Clip {
 
 		name = "??";
 
-		PVector layerBoxSize = new PVector(600,600); // RESOLUCION Q SE LA BANCA
-		drawLayer = p5.createGraphics((int)layerBoxSize.x, (int)layerBoxSize.y, rendererType); // SI PONGO P2D, EL FRAMERATE DROPPEA MAAAAALL..!!
-		//viewPosition = new PVector();
-		
+		PVector layerBoxSize = ClipManager.canvasSize; // RESOLUCION Q SE LA BANCA
+		drawLayer = p5.createGraphics((int) layerBoxSize.x, (int) layerBoxSize.y, rendererType); // SI PONGO P2D, EL FRAMERATE DROPPEA MAAAAALL..!!
+		viewPosition = ClipManager.clipViewPosition;
+
 		triggers = new boolean[5];
 		for (int i = 0; i < triggers.length; i++) {
 			triggers[i] = false;
 		}
 
 	}
-	
 
 	public void start() {
 		isPlaying = true;
-		PixelPicker.setSamplingSurface(drawLayer);
 		p5.println("-|| STARTING: " + name);
 	}
 
@@ -65,7 +63,7 @@ public class Clip {
 	}
 
 	public void resetTriggers() {
-		for (int i=0; i < triggers.length; i++) {
+		for (int i = 0; i < triggers.length; i++) {
 			triggers[i] = false;
 		}
 	}
@@ -73,51 +71,55 @@ public class Clip {
 	public String getName() {
 		return name;
 	}
-	
-	public void setViewPositioner(PVector positionObject){
+
+	public void setViewPositioner(PVector positionObject) {
 		viewPosition = positionObject;
 	}
-	public PVector getViewPosition(){
+
+	public PVector getViewPosition() {
 		return viewPosition;
 	}
-
 
 	public void update() {
 	}
 
-
 	public void render() {
-		p5.image(drawLayer, viewPosition.x, viewPosition.y);
+		if (ClipManager.displayClips) {
+			p5.image(drawLayer, viewPosition.x, viewPosition.y);
+		}
 	}
-
 
 	public PGraphics getDrawLayer() {
 		return drawLayer;
 	}
-	
-	public void onKeyPressed(char key){
-		
+
+	public void onKeyPressed(char key) {
+
 	}
-	
+
 	// EVENTS FROM A MIDI CONTROLLER - BEGIN ------------
-	
+
 	public void recieveControllerChange(int channel, int number, int value) {
 
 	}
 
 	public void recieveNoteOn(int channel, int pitch, int velocity) {
 
-
 	}
 
 	public void recieveNoteOff(int channel, int pitch, int velocity) {
 
 	}
-	
+
 	// EVENTS FROM A MIDI CONTROLLER - END ------------
-	
-	public void setAudioTrigger(boolean state){
+
+	public void setAudioTrigger(boolean state) {
 		audioTrigger = state;
+	}
+
+	public void beatEvent(int beatDivision) {
+		// beatDivision ESTA POR SI SI QUIERE USAR
+
 	}
 
 	protected Main getP5() {

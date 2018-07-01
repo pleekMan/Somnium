@@ -1,5 +1,7 @@
 package clips;
 
+import java.awt.font.NumericShaper;
+
 import globals.Clip;
 
 public class SphereHarmony extends Clip {
@@ -275,21 +277,10 @@ public class SphereHarmony extends Clip {
 
 	// EVENTS FROM A MIDI CONTROLLER - END ------------
 
-	@Deprecated
-	void dibujarCirculo() {
-
-		//stroke(brillo);
-		p5.fill(brillo, 127);
-		for (int j = 0; j < centroX.length; j++) {
-
-			for (int i = 0; i < cantidadDeVertices; i++) {
-				//line(vertXPos[i],vertYPos[i], vertXPos[(i+1) % cantidadDeVertices], vertYPos[(i+1) % cantidadDeVertices]);
-				//line(vertXPos[i], vertYPos[i], centroX, centroY);
-				p5.fill(p5.abs(p5.sin(i * 0.01f)) * 255, 0, p5.abs(p5.sin(i * 0.02f)) * 255, 127);
-				p5.ellipse(vertXPos[j][i], vertYPos[j][i], pointSize, pointSize);
-				//point(vertXPos[i], vertYPos[i]);
-			}
-		}
+	@Override
+	public void beatEvent(int beatDivision){
+		// beatDivision ESTA POR SI SI QUIERE USAR
+		funcionTrigUsada = (funcionTrigUsada + 1) % 3;
 	}
 
 }

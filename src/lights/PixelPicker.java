@@ -19,6 +19,7 @@ public class PixelPicker {
 	boolean enableSendOut;
 
 	boolean calibrateMode = false;
+	
 
 	public PixelPicker() {
 		p5 = getP5();
@@ -160,6 +161,12 @@ public class PixelPicker {
 			p5.stroke(30);
 			//p5.noStroke();
 			p5.ellipse(pickers.get(i).getX() * samplingSurface.width, pickers.get(i).getY() * samplingSurface.height, 10, 10);
+		}
+	}
+	
+	public void drawRockyPickers(){
+		for (int i = 0; i < pickers.size(); i++) {
+			
 		}
 	}
 
