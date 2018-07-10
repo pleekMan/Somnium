@@ -15,5 +15,8 @@
 	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/TSPS 1.4/library/oscP5.jar"/>
 	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/TSPS 1.4/library/TSPS.jar"/>
 	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/controlP5 2.2.5/library/controlP5.jar"/>
+	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/processing Core/video/jna.jar"/>
+	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/processing Core/video/video.jar"/>
+	<classpathentry kind="lib" path="/Projects/EclipseWorkSpace/libraries/processing Core/video/gstreamer-java.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

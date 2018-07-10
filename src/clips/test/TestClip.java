@@ -28,7 +28,9 @@ public class TestClip extends Clip {
 	public void render() {
 		drawLayer.beginDraw();
 		//drawLayer.background(0);
-		drawLayer.fill((p5.frameCount % 255), (p5.frameCount % 200), (p5.frameCount % 230));
+		//drawLayer.fill((p5.frameCount % 255), (p5.frameCount % 200), (p5.frameCount % 230));
+		drawLayer.fill(255);
+		drawLayer.noStroke();
 		drawLayer.ellipse(p5.mouseX, p5.mouseY, 50, 50);
 		drawLayer.endDraw();
 

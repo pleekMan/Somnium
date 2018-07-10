@@ -7,6 +7,7 @@ import processing.core.PVector;
 import tools.TempoManager;
 import controls.GuiControllers;
 import clips.SphereHarmony;
+import clips.distantSignal.DistantSignal;
 import clips.test.TestClip;
 import clips.transition.Fader;
 
@@ -50,6 +51,8 @@ public class ClipManager {
 		//audioIn = new AudioController();
 
 		loadClipSequence();
+		selectedClip = 2;
+		triggerClip(selectedClip);
 
 	}
 
@@ -67,6 +70,13 @@ public class ClipManager {
 		testClip.setViewPositioner(clipViewPosition);
 		clips.add(testClip);
 		System.out.println("-|| Loaded :> " + testClip.getName());
+		
+		DistantSignal distantSignal = new DistantSignal(p5.P2D);
+		distantSignal.load();
+		distantSignal.setName("DISTANT SIGNAL");
+		distantSignal.setViewPositioner(clipViewPosition);
+		clips.add(distantSignal);
+		System.out.println("-|| Loaded :> " + distantSignal.getName());
 
 		/*
 		PlatonicSolids platonicSolids = new PlatonicSolids(p5.P3D);
@@ -119,7 +129,7 @@ public class ClipManager {
 
 		// CLIPS
 		getPlayingClip().update();
-		getPlayingClip().resetTriggers();
+		//getPlayingClip().resetTriggers();
 		/*
 		for (Clip clip : clips) {
 			if (clip.isPlaying()) {
@@ -398,21 +408,23 @@ public class ClipManager {
 		}
 
 		// TRIGGERS
-		if (key == 'z') {
+		if (key == '1') {
 			//clips.get(playingClip).trigger(0);
 			//clipViewPosition.set(p5.mouseX, p5.mouseY);
+			getPlayingClip().trigger(0);
+
 		}
-		if (key == 'x') {
-			clips.get(playingClip).trigger(1);
+		if (key == '2') {
+			getPlayingClip().trigger(1);
 		}
-		if (key == 'c') {
-			clips.get(playingClip).trigger(2);
+		if (key == '3') {
+			getPlayingClip().trigger(2);
 		}
-		if (key == 'v') {
-			clips.get(playingClip).trigger(3);
+		if (key == '4') {
+			getPlayingClip().trigger(3);
 		}
-		if (key == 'b') {
-			clips.get(playingClip).trigger(4);
+		if (key == '5') {
+			getPlayingClip().trigger(4);
 		}
 
 	}

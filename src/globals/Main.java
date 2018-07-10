@@ -17,11 +17,6 @@ public class Main extends PApplet {
 	//MidiController midiController;
 	RockyPickers rockyPickers;
 
-	// GUI - BEGIN -----------------
-
-	//ControlP5 cp5;
-
-	// GUI - END -------------------
 
 	public void settings() {
 		size(1200, 800, P2D);

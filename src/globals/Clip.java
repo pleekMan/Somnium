@@ -1,6 +1,5 @@
 package globals;
 
-import lights.PixelPicker;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
@@ -87,6 +86,11 @@ public class Clip {
 		if (ClipManager.displayClips) {
 			p5.image(drawLayer, viewPosition.x, viewPosition.y);
 		}
+		
+		resetTriggers();
+		p5.fill(255);
+		p5.text("--|| TRIGGERS:\n0 = " + triggers[0] + "\n1 = " + triggers[1] + "\n2 = " + triggers[2] + "\n3 = " + triggers[3] + "\n4 = " + triggers[4], 620, 20);
+		
 	}
 
 	public PGraphics getDrawLayer() {

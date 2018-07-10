@@ -1,7 +1,5 @@
 package clips;
 
-import java.awt.font.NumericShaper;
-
 import globals.Clip;
 
 public class SphereHarmony extends Clip {
