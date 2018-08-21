@@ -7,7 +7,7 @@ import processing.core.PVector;
 import tools.TempoManager;
 import controls.GuiControllers;
 import clips.SphereHarmony;
-import clips.distantSignal.DistantSignal;
+import clips.distantSignal.VideoClip;
 import clips.test.TestClip;
 import clips.transition.Fader;
 
@@ -71,9 +71,9 @@ public class ClipManager {
 		clips.add(testClip);
 		System.out.println("-|| Loaded :> " + testClip.getName());
 		
-		DistantSignal distantSignal = new DistantSignal(p5.P2D);
+		VideoClip distantSignal = new VideoClip(p5.P2D);
 		distantSignal.load();
-		distantSignal.setName("DISTANT SIGNAL");
+		distantSignal.setName("TOWARDS THE COSMIC CRYSTAL");
 		distantSignal.setViewPositioner(clipViewPosition);
 		clips.add(distantSignal);
 		System.out.println("-|| Loaded :> " + distantSignal.getName());

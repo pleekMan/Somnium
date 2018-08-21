@@ -3,7 +3,6 @@ package globals;
 //import controls.MidiController;
 import clips.rockyPickers.RockyPickers;
 import processing.core.PApplet;
-import processing.core.PVector;
 import tools.Tools;
 import lights.PixelPicker;
 import controlP5.ControlEvent;
@@ -15,7 +14,8 @@ public class Main extends PApplet {
 	PixelPicker pixelPicker;
 	//ComputerVisionManager cvManager;
 	//MidiController midiController;
-	RockyPickers rockyPickers;
+	
+	RockyPickers rockyPickers; // Special ClipType to simulate the rocks
 
 
 	public void settings() {
@@ -65,6 +65,7 @@ public class Main extends PApplet {
 		clipManager.render();
 
 		pixelPicker.update();
+		
 
 		if (rockyPickers.display) {
 			rockyPickers.setRockColors(pixelPicker.getAllPickers());

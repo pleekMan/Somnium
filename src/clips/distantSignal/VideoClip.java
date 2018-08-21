@@ -4,11 +4,11 @@ import processing.core.PVector;
 import processing.video.Movie;
 import globals.Clip;
 
-public class DistantSignal extends Clip {
+public class VideoClip extends Clip {
 
 	Movie movieClip;
 
-	public DistantSignal(String _rendererType) {
+	public VideoClip(String _rendererType) {
 		super(_rendererType);
 		// TODO Auto-generated constructor stub
 	}
@@ -17,7 +17,7 @@ public class DistantSignal extends Clip {
 	public void load() {
 		super.load();
 
-		movieClip = new Movie(p5, p5.sketchPath() + "/bin/data/movieClips/Remote Signal.mov");
+		movieClip = new Movie(p5, p5.sketchPath() + "/bin/data/movieClips/TOWARDS THE COSMIC CRYSTAL.mov");
 	}
 
 	@Override

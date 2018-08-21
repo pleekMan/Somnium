@@ -23,6 +23,10 @@ public class PixelPicker {
 
 	public PixelPicker() {
 		p5 = getP5();
+		
+		p5.printArray(Serial.list());
+		
+		//serialPort = new Serial(p5, Serial.list()[0],9600);
 
 		pickers = new ArrayList<Picker>();
 		//samplingSurface = createGraphics(_surfaceWidth, _surfaceHeight, P2D);
@@ -137,7 +141,7 @@ public class PixelPicker {
 						byte[] toSend = { mapByteToRange(r), mapByteToRange(g), mapByteToRange(b) };
 						serialPort.write(toSend);
 					}
-					//serialPort.write(byte(101)); // 201 => CODE FOR "FINISHED SENDING ALL LEDS"
+					//serialPort.write(byte(201)); // 201 => CODE FOR "FINISHED SENDING ALL LEDS"
 					serialPort.clear();
 				}
 			}
